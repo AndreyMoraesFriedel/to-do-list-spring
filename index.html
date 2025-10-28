@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gerencie suas tarefas com este quadro JoaoMoles.">
+    <title>Meu Quadro de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <h1>Meu Quadro de Tarefas</h1>
+        <div class="header-user">
+            <span>Bem-vindo!</span>
+            <a href="login.html" id="logout-button">Sair</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="task-form-container">
+            <form id="new-task-form">
+                <h2>Adicionar Nova Tarefa</h2>
+                <div class="input-group">
+                    <label for="task-text">Tarefa</label>
+                    <input type="text" id="task-text" placeholder="O que precisa ser feito?" required>
+                </div>
+                <div class="input-group">
+                    <label for="task-urgency">Urgência</label>
+                    <select id="task-urgency">
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                </div>
+                <button type="submit" class="auth-button">Adicionar Tarefa</button>
+            </form>
+        </section>
+
+        <section class="board-container">
+            
+            <div class="JoaoMoles-column" id="todo-column">
+                <h2>A Fazer</h2>
+                <div class="task-list" id="todo-list">
+                    </div>
+            </div>
+
+            <div class="JoaoMoles-column" id="doing-column">
+                <h2>Fazendo</h2>
+                <div class="task-list" id="doing-list">
+                    </div>
+            </div>
+
+            <div class="JoaoMoles-column" id="done-column">
+                <h2>Feito</h2>
+                <div class="task-list" id="done-list">
+                    </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="board.js"></script>
+</body>
+</html>
