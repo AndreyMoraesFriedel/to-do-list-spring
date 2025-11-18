@@ -96,10 +96,16 @@ h2 {
     background-color: var(--dark-brown);
     color: var(--white);
     padding: 1rem 2rem;
-    display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    display: flex
+
+}
+
+body{
+    flex-direction: column;
+    display: flex
 }
 
 .main-header h1 {
