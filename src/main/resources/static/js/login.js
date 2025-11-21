@@ -20,30 +20,49 @@ document.addEventListener("DOMContentLoaded", () => {
         loginFormContainer.classList.remove("hidden");
     });
 
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
         e.preventDefault(); 
 
         const email = document.getElementById("login-email").value;
         const password = document.getElementById("login-password").value;
 
-            fetch("http://localhost:8080/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-            })
+        try {
+            const response = await fetch("/api/login", { // URL relativa
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+                credentials: "same-origin" // envia cookies/sessão
+            });
 
-
-        .then(response => {
-            if (!response.ok) throw new Error('Email ou senha inválidos');
-            return response.json();
-        })
-
-        .then(data => {
-            if (data.status === 'success') {
-                window.location.href = 'index.html';
+            // se servidor redirecionou (fetch segue redirect por padrão)
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
             }
-        })
 
+            if (!response.ok) {
+                const txt = await response.text().catch(() => "");
+                throw new Error(txt || `Erro ${response.status}`);
+            }
+
+            // tenta ler JSON; se não tiver, redireciona para index
+            let data;
+            try {
+                data = await response.json();
+            } catch (err) {
+                window.location.href = "/index.html";
+                return;
+            }
+
+            if (data && data.status === "success") {
+                window.location.href = "/index.html";
+            } else {
+                alert(data.message || "Falha no login");
+            }
+        } catch (err) {
+            console.error("Login erro:", err);
+            alert(err.message || "Erro de rede ao tentar logar");
+        }
     });
 
     registerForm.addEventListener("submit", (e) => {
@@ -53,17 +72,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = document.getElementById("reg-email").value;
         const password = document.getElementById("reg-password").value;
 
-        fetch("http://localhost:8080/api/register", {
+        fetch("/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password })
+            body: JSON.stringify({ name, email, password }),
+            credentials: "same-origin"
         })
         .then(response => response.json())
         .then(data => {
             console.log("Resposta do cadastro:", data);
             if (data.status === "success") {
                 alert("Usuário cadastrado com sucesso!");
-                // troca pra tela de login automaticamente
                 registerFormContainer.classList.add("hidden");
                 loginFormContainer.classList.remove("hidden");
             } else {
