@@ -48,6 +48,7 @@ public class TaskController {
         public Integer priority;
         public Long userId;
         public Long dashboardId;
+        public String image;
     }
 
     @PostMapping
@@ -65,9 +66,12 @@ public class TaskController {
         newTask.setPriority(taskDto.priority);
         newTask.setUser(userOpt.get());
         newTask.setDashboard(dashOpt.get());
+        newTask.setImageBase64(taskDto.image);
 
         Task savedTask = taskRepository.save(newTask);
         return ResponseEntity.ok(savedTask);
+
+        
     }
 
     @PutMapping("/{id}")

@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Gerencie suas tarefas com este quadro JoaoMoles.">
+    <meta name="description" content="Gerencie suas tarefas com este quadro.">
     <title>Meu Quadro de Tarefas</title>
     <link rel="stylesheet" href="css/style.css">
-    
-
 </head>
 <body>
 
@@ -20,13 +18,16 @@
     </header>
 
     <main>
+        <!-- SEÇÃO DE CRIAÇÃO -->
         <section class="task-form-container">
             <form id="new-task-form">
                 <h2>Adicionar Nova Tarefa</h2>
+                
                 <div class="input-group">
                     <label for="task-text">Tarefa</label>
                     <input type="text" id="task-text" placeholder="O que precisa ser feito?" required>
                 </div>
+                
                 <div class="input-group">
                     <label for="task-urgency">Urgência</label>
                     <select id="task-urgency">
@@ -35,32 +36,65 @@
                         <option value="alta">Alta</option>
                     </select>
                 </div>
+
+                <!-- NOVO CAMPO: UPLOAD DE IMAGEM -->
+                <div class="input-group">
+                    <label for="task-image">Imagem (Opcional)</label>
+                    <input type="file" id="task-image" accept="image/*">
+                </div>
+
                 <button type="submit" class="auth-button">Adicionar Tarefa</button>
             </form>
         </section>
 
+        <!-- SEÇÃO DO QUADRO KANBAN -->
         <section class="board-container">
             
-            <div class="JoaoMoles-column" id="todo-column">
+            <div class="column" id="todo-column">
                 <h2>A Fazer</h2>
                 <div class="task-list" id="todo-list">
-                    </div>
+                    <!-- Cards são inseridos aqui pelo JS -->
+                </div>
             </div>
 
-            <div class="JoaoMoles-column" id="doing-column">
+            <div class="column" id="doing-column">
                 <h2>Fazendo</h2>
                 <div class="task-list" id="doing-list">
-                    </div>
+                    <!-- Futuro uso -->
+                </div>
             </div>
 
-            <div class="JoaoMoles-column" id="done-column">
+            <div class="column" id="done-column">
                 <h2>Feito</h2>
                 <div class="task-list" id="done-list">
-                    </div>
+                    <!-- Futuro uso -->
+                </div>
             </div>
 
         </section>
     </main>
-</body>
+
+    <!-- MODAL (DETALHES DA TAREFA) -->
+    <!-- Começa oculto com a classe 'hidden' definida no CSS -->
+    <div id="task-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-modal-btn">&times;</span>
+            
+            <h2 id="modal-title">Título da Tarefa</h2>
+            <p id="modal-priority">Prioridade: <span></span></p>
+            
+            <!-- A imagem aparecerá aqui se existir -->
+            <div id="modal-image-container"></div>
+
+            <p id="modal-description" style="margin-top: 15px; color: #666;">
+                <!-- Descrição futura -->
+            </p>
+        </div>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <!-- 'type="module"' é obrigatório para usar imports/exports -->
     <script type="module" src="js/TaskPage.js"></script>
+
+</body>
 </html>
