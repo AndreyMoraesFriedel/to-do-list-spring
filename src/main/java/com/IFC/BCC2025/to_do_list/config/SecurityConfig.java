@@ -15,11 +15,14 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) 
             .authorizeHttpRequests(auth -> auth
+
                 .requestMatchers("/api/**").permitAll()
 
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
 
                 .requestMatchers("/*.html").permitAll()
+                
+                .requestMatchers("/error").permitAll() 
 
                 .anyRequest().authenticated()
             )

@@ -1,172 +1,116 @@
-const API_TASKS_URL = '/api/tasks'; 
+// Importa as funcionalidades das outras pastas (Components)
+// Certifique-se que os arquivos api.js, taskRenderer.js e dragAndDrop.js estão dentro da pasta 'Components'
+import { fetchTasks, createTask } from './Components/api.js';
+import { createTaskCardElement } from './Components/taskRender.js';
+import { enableDragAndDrop, setupDropZones } from './Components/dragAndDrop.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Identificar Usuário e Dashboard Atual
+    // --- 1. CONFIGURAÇÃO INICIAL E VALIDAÇÃO ---
     const urlParams = new URLSearchParams(window.location.search);
     const dashboardId = urlParams.get('dashboardId');
     const userId = localStorage.getItem('loggedInUserId');
-    const token = localStorage.getItem('authToken'); // Se estiver usando token
+    const token = localStorage.getItem('authToken');
 
-    // Referências do DOM
+    // Referências aos elementos do HTML
     const taskForm = document.getElementById("new-task-form");
-    const taskTextInput = document.getElementById("task-text");
-    const taskUrgencyInput = document.getElementById("task-urgency");
-    const todoList = document.getElementById("todo-list"); // Coluna "A Fazer"
-    const taskLists = document.querySelectorAll(".task-list");
+    const todoList = document.getElementById("todo-list");
+    const allTaskLists = document.querySelectorAll(".task-list");
 
-    // Validação de Segurança
+    // Validação de Segurança Básica
     if (!dashboardId || !userId) {
-        alert("Erro: Dashboard ou Usuário não identificado. Voltando...");
-        window.location.href = "/MainPage.html"; // Volta para a lista de dashboards
+        alert("Erro de navegação: Dashboard ou Usuário não identificados. A voltar para a Home.");
+        window.location.href = "/MainPage.html";
         return;
     }
 
-    // --- FUNÇÃO 1: CARREGAR TAREFAS DO BANCO ---
-    async function loadTasks() {
+    // Configura as colunas para aceitarem itens soltos (Drag & Drop)
+    setupDropZones(allTaskLists);
+
+    // --- 2. FUNÇÃO: CARREGAR E RENDERIZAR TAREFAS ---
+    async function loadAndRenderTasks() {
         try {
-            // Chama a rota: GET /api/tasks?dashboardId=X
-            const response = await fetch(`${API_TASKS_URL}?dashboardId=${dashboardId}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                }
-            });
+            // Usa o componente de API para buscar dados no servidor
+            const tasks = await fetchTasks(dashboardId, token);
 
-            if (response.ok) {
-                const tasks = await response.json();
-                // Limpa a lista antes de encher
-                todoList.innerHTML = '<h3>A Fazer</h3>'; // Mantém o título se houver
-                
-                tasks.forEach(task => {
-                    // Aqui assumimos que toda tarefa nova vai para "todo-list"
-                    // (Para salvar a coluna correta, precisaríamos de um campo 'status' no banco)
-                    const card = createTaskCardElement(task.id, task.title, task.priority);
-                    todoList.appendChild(card);
-                });
-            }
-        } catch (error) {
-            console.error("Erro ao carregar tarefas:", error);
-        }
-    }
-
-    // Chama o carregamento inicial
-    loadTasks();
-
-
-    // --- FUNÇÃO 2: CRIAR NOVA TAREFA (POST) ---
-    taskForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const text = taskTextInput.value.trim();
-        const urgencyStr = taskUrgencyInput.value; // "alta", "media", "baixa"
-
-        if (text === "") {
-            alert("Por favor, descreva a tarefa.");
-            return;
-        }
-
-        // Converter urgência de String para Número (se seu backend espera Integer)
-        // Exemplo: 1=Alta, 2=Media, 3=Baixa (ajuste conforme sua lógica Java)
-        let priorityInt = 3; 
-        if(urgencyStr === 'alta') priorityInt = 1;
-        if(urgencyStr === 'media') priorityInt = 2;
-
-        const newTaskPayload = {
-            title: text,
-            description: "", // Se tiver campo descrição, coloque aqui
-            priority: priorityInt,
-            // IDs enviados para serem tratados no backend
-            userId: userId,         
-            dashboardId: dashboardId 
-        };
-
-        try {
-            const response = await fetch(API_TASKS_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify(newTaskPayload)
-            });
-
-            if (response.ok) {
-                const savedTask = await response.json();
-                
-                // Só cria na tela se o banco salvou com sucesso
-                const taskCard = createTaskCardElement(savedTask.id, savedTask.title, urgencyStr);
-                todoList.appendChild(taskCard);
-
-                // Limpa form
-                taskTextInput.value = "";
-                taskUrgencyInput.value = "baixa";
-            } else {
-                alert("Erro ao salvar tarefa no servidor.");
-            }
-        } catch (error) {
-            console.error("Erro de rede:", error);
-        }
-    });
-
-
-    // --- FUNÇÃO AUXILIAR: CRIAR O HTML DO CARD ---
-    function createTaskCardElement(id, text, urgency) {
-        // Converte número de volta para texto se vier do banco (ex: 1 -> "alta")
-        let urgencyClass = urgency;
-        if (typeof urgency === 'number') {
-            if(urgency === 1) urgencyClass = 'alta';
-            else if(urgency === 2) urgencyClass = 'media';
-            else urgencyClass = 'baixa';
-        }
-
-        const card = document.createElement("div");
-        card.className = `task-card urgency-${urgencyClass}`;
-        card.draggable = true;
-        card.id = "task-" + id; // Usa o ID real do banco
-
-        card.innerHTML = `
-            <p>${text}</p>
-            <div class="urgency-tag">${urgencyClass}</div>
-        `;
-
-        addDragEvents(card);
-        return card;
-    }
-
-    // --- LÓGICA DE DRAG AND DROP (Manteve a sua) ---
-    let draggedItem = null;
-
-    function addDragEvents(card) {
-        card.addEventListener("dragstart", (e) => {
-            draggedItem = card;
-            e.dataTransfer.setData('text/plain', card.id);
-            setTimeout(() => {
-                card.classList.add("dragging"); 
-            }, 0);
-        });
-
-        card.addEventListener("dragend", () => {
-            setTimeout(() => {
-                draggedItem.classList.remove("dragging");
-                draggedItem = null;
-            }, 0);
+            // Limpa a coluna visualmente antes de renderizar para não duplicar
+            todoList.innerHTML = '';
             
-            // DICA FUTURA: Aqui você poderia fazer um PUT para atualizar o status no banco
-            // baseado em qual coluna o item caiu (todo-list, doing, done)
-        });
+            tasks.forEach(task => {
+                // A. Cria o HTML do card usando o componente Renderizador
+                const card = createTaskCardElement(task);
+                
+                // B. Ativa o comportamento de arrastar no card criado
+                enableDragAndDrop(card);
+                
+                // C. Adiciona o card na tela (Por padrão na coluna 'A Fazer')
+                // Nota: Se futuramente tiver 'status' no banco, pode fazer if(task.status == 'done') aqui.
+                todoList.appendChild(card);
+            });
+
+        } catch (error) {
+            console.error("Falha ao carregar tarefas:", error);
+            // Mostra erro na tela se a lista estiver vazia
+            if(todoList.children.length === 0) {
+                todoList.innerHTML = '<p style="color:red; font-size: 0.9em; padding: 10px;">Erro ao carregar tarefas.</p>';
+            }
+        }
     }
 
-    taskLists.forEach(list => {
-        list.addEventListener("dragover", (e) => {
-            e.preventDefault();
-        });
+    // Chama o carregamento inicial assim que a página abre
+    loadAndRenderTasks();
 
-        list.addEventListener("drop", (e) => {
+    // --- 3. EVENTO: CRIAR NOVA TAREFA (FORMULÁRIO) ---
+    if (taskForm) {
+        taskForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            if (draggedItem) {
-                list.appendChild(draggedItem);
+
+            // Pega os valores dos inputs
+            const textInput = document.getElementById("task-text");
+            const urgencyInput = document.getElementById("task-urgency");
+            
+            const title = textInput.value.trim();
+            const urgencyStr = urgencyInput.value;
+
+            if (!title) {
+                alert("Por favor, digite o nome da tarefa.");
+                return;
+            }
+
+            // Converte urgência para Integer (regra de negócio do Java: 1=Alta, 2=Média, 3=Baixa)
+            let priorityInt = 3; 
+            if(urgencyStr === 'alta') priorityInt = 1;
+            if(urgencyStr === 'media') priorityInt = 2;
+
+            // Monta o objeto DTO para enviar ao Backend
+            const newTaskData = {
+                title: title,
+                description: "", // Futuramente você pode adicionar um campo de descrição no form
+                priority: priorityInt,
+                userId: userId,
+                dashboardId: dashboardId
+            };
+
+            try {
+                // A. Usa o componente API para salvar no banco de dados
+                const savedTask = await createTask(newTaskData, token);
+
+                // B. Renderiza o novo card na tela imediatamente (sem precisar recarregar a página)
+                const card = createTaskCardElement(savedTask);
+                
+                // C. Ativa o drag and drop no novo card
+                enableDragAndDrop(card);
+                
+                // D. Adiciona na coluna
+                todoList.appendChild(card);
+
+                // E. Limpa o formulário para a próxima tarefa
+                textInput.value = "";
+                urgencyInput.value = "baixa";
+
+            } catch (error) {
+                console.error("Falha ao criar tarefa:", error);
+                alert("Erro ao salvar a tarefa. Tente novamente.");
             }
         });
-    });
-
+    }
 });
