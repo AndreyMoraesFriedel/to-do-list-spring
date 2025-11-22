@@ -11,24 +11,30 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
-public class AuthController {
+public class AuthController { 
 
     @Autowired
     private UserRepository userRepository;
 
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-    String email = body.get("email");
-    String password = body.get("password");
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String password = body.get("password");
 
-    User user = userRepository.findByEmailAndPassword(email, password);
+        User user = userRepository.findByEmailAndPassword(email, password);
 
-    if (user != null) {
-        return ResponseEntity.ok(Map.of("status", "success", "name", user.getName()));
-    } else {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("status", "fail"));
+        if (user != null) {
+            return ResponseEntity.ok(Map.of(
+                "status", "success", 
+                "name", user.getName(),
+                "userId", user.getId() 
+            ));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("status", "fail", "message", "Email ou senha inválidos."));
+        }
     }
-}
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
@@ -46,12 +52,14 @@ public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         User newUser = new User();
         newUser.setName(name);
         newUser.setEmail(email);
-        newUser.setPassword(password); //criptografa bb
-        userRepository.save(newUser);
+        newUser.setPassword(password);
+        
+        User savedUser = userRepository.save(newUser); 
 
-        return ResponseEntity.ok(Map.of("status", "success", "message", "Usuário cadastrado com sucesso"));
+        return ResponseEntity.ok(Map.of(
+            "status", "success", 
+            "message", "Usuário cadastrado com sucesso",
+            "userId", savedUser.getId() 
+        ));
     }
 }
-
-
-

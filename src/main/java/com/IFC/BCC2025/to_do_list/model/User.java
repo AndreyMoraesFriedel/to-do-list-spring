@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Column;
 
 @Entity
 public class User {
@@ -16,12 +17,18 @@ public class User {
     private Long id;
 
     private String name;
-    private String email;
-    private String password;
+    
+    @Column(unique = true) 
+    private String email; 
+    
+    private String password; 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Task> tasks;
-
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Dashboard> dashboards; 
+    
     public User() {}
 
     public User(String name, String email, String password) {
@@ -65,5 +72,12 @@ public class User {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
+    
+    public List<Dashboard> getDashboards() {
+        return dashboards;
+    }
 
+    public void setDashboards(List<Dashboard> dashboards) {
+        this.dashboards = dashboards;
+    }
 }

@@ -1,5 +1,7 @@
 package com.IFC.BCC2025.to_do_list.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,15 +21,22 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "fk_user_id")
+    @JsonIgnore
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_dashboard_id")
+    @JsonIgnore
+    private Dashboard dashboard;
 
     public Task() {}
 
-    public Task(String title, String description, Integer priority, User user) {
+    public Task(String title, String description, Integer priority, User user, Dashboard dashboard) {
         this.title = title;
         this.description = description;
         this.priority = priority;
         this.user = user;
+        this.dashboard = dashboard;
     }
 
     public Long getId() {
@@ -64,6 +73,14 @@ public class Task {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Dashboard getDashboard() {
+        return this.dashboard;
+    }
+
+    public void setDashboard(Dashboard dashboard) {
+        this.dashboard = dashboard;
     }
     
 }
