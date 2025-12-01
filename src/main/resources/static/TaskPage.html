@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gerencie suas tarefas com este quadro.">
+    <title>Meu Quadro de Tarefas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <h1>Meu Quadro de Tarefas</h1>
+        <div class="header-user">
+            <span>Bem-vindo!</span>
+            <a href="login.html" id="logout-button">Sair</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="actions-bar" style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+            <button id="btn-open-create" class="auth-button" style="background-color: #00BFFF;">
+                + Nova Tarefa
+            </button>
+        </div>
+
+        <section class="board-container" id="board-container">
+            
+            <div class="column" id="todo-column">
+                <h2>A Fazer</h2>
+                <div class="task-list" id="todo-list">
+                </div>
+            </div>
+
+            <div class="column" id="doing-column">
+                <h2>Fazendo</h2>
+                <div class="task-list" id="doing-list">
+                </div>
+            </div>
+
+            <div class="column" id="done-column">
+                <h2>Feito</h2>
+                <div class="task-list" id="done-list">
+                    <!-- Futuro uso -->
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- 2. MODAL DE CRIAÇÃO (Novo) -->
+    <!-- IDs batem com ui.createModal no JS -->
+    <div id="create-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-create-btn close-modal-btn">&times;</span>
+            <h2>Nova Tarefa</h2>
+            
+            <form id="create-task-form">
+                <div class="input-group">
+                    <label for="create-text">Título</label>
+                    <input type="text" id="create-text" placeholder="Ex: Comprar leite" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="create-description">Descrição</label>
+                    <textarea id="create-description" rows="3" placeholder="Detalhes da tarefa..."></textarea>
+                </div>  
+
+                <div class="input-group">
+                    <label for="create-urgency">Prioridade</label>
+                    <select id="create-urgency">
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option> <option value="alta">Alta</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="create-image">Anexo (Imagem)</label>
+                    <input type="file" id="create-image" accept="image/*">
+                </div>
+
+                <button type="submit" class="auth-button" style="width: 100%; margin-top: 10px;">Criar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. MODAL DE VISUALIZAÇÃO (Detalhes) -->
+    <!-- ATENÇÃO: IDs atualizados para bater com ui.viewModal no JS (ex: view-title em vez de modal-title) -->
+    <div id="view-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-view-btn close-modal-btn">&times;</span>
+            
+            <h2 id="view-title">...</h2>
+            <p id="view-priority" style="font-weight: bold; margin-bottom: 10px;">...</p>
+            
+            <!-- Container da imagem -->
+            <div id="view-image-container"></div>
+
+            <p id="view-description" style="margin-top: 15px; color: #666;">
+                ...
+            </p>
+        </div>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script type="module" src="js/TaskPage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+</body>
+</html>
