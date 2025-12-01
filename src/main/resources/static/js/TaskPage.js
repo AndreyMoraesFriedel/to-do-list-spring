@@ -1,10 +1,11 @@
 import { enableDragAndDrop, setupDropZones } from './Components/dragAndDrop.js';
-import { fetchTasks, createTask } from './Components/api.js';
 import { createTaskCardElement } from './Components/taskRender.js';
+import { fetchTasks, createTask, updateTaskContent, deleteTask } from './Components/api.js';
 
 const PRIORITY_MAP = { 'alta': 1, 'media': 2, 'baixa': 3 };
 
 document.addEventListener("DOMContentLoaded", () => {
+    let currentEditingTaskId = null; // Variável para controlar se estamos Editando (ID) ou Criando (null)
     const urlParams = new URLSearchParams(window.location.search);
     const dashboardId = urlParams.get('dashboardId');
     const userId = localStorage.getItem('loggedInUserId');
@@ -47,23 +48,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // 1. Validação de Sessão
     if (!dashboardId || !userId) {
         alert("Sessão inválida. Retornando...");
         window.location.href = "/MainPage.html";
         return;
     }
 
+    // 2. Inicialização
     setupDropZones(ui.lists.all, token);
-    
     setupEventListeners();
-
     loadAndRenderTasks();
 
+
+    // --- FUNÇÕES ---
 
     async function loadAndRenderTasks() {
         try {
             const tasks = await fetchTasks(dashboardId, token);
 
+            // Limpa as colunas antes de renderizar para não duplicar visualmente
             Object.values(COLUMN_MAP).forEach(listElement => {
                 if (listElement) listElement.innerHTML = '';
             });
@@ -74,14 +78,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             tasks.forEach(task => {
-                const listElement = COLUMN_MAP[task.status]; 
+                // Se o status vier nulo do banco, joga para FAZER como segurança
+                const statusKey = task.status || 'FAZER';
+                const listElement = COLUMN_MAP[statusKey] || COLUMN_MAP['FAZER'];
                 
-                if (listElement) {
-                    addTaskToScreen(task, listElement); 
-                } else {
-                    console.error(`Status desconhecido (${task.status}). Colocando em 'A Fazer' como fallback.`);
-                    addTaskToScreen(task, COLUMN_MAP['FAZER']); 
-                }
+                addTaskToScreen(task, listElement); 
             });
             
         } catch (error) {
@@ -97,66 +98,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const title = ui.createModal.inputs.text.value.trim();
         const description = ui.createModal.inputs.description.value.trim(); 
-
-        if (!title) {
-            alert("O nome da tarefa é obrigatório.");
-            return;
-        }
-
-       
-        function getPriorityValue(str) {
-        if (!str) return 3;
-        const cleanStr = str.toString().toLowerCase().trim();
-        return PRIORITY_MAP[cleanStr] || 3;
-        }
-
         const rawUrgency = ui.createModal.inputs.urgency.value;
         const priorityInt = getPriorityValue(rawUrgency);
-        console.log(`Prioridade Selecionada: "${rawUrgency}" -> Convertida para ID: ${priorityInt}`);
-
-
         const file = ui.createModal.inputs.image.files[0];
+
+        if (!title) return alert("O título é obrigatório.");
 
         try {
             const base64Image = file ? await convertImageToBase64(file) : null;
 
-            const newTaskData = {
+            // Objeto base da tarefa
+            const taskData = {
                 title: title,
                 description: description,
                 priority: priorityInt,
-                userId: userId,
-                dashboardId: dashboardId,
-                image: base64Image
             };
+            if (base64Image) taskData.image = base64Image;
 
-            const savedTask = await createTask(newTaskData, token);
+            if (currentEditingTaskId) {
+                // === MODO EDIÇÃO (PATCH) ===
+                console.log(`Editando tarefa ${currentEditingTaskId}...`);
+                const updatedTask = await updateTaskContent(currentEditingTaskId, taskData, token);
+                
+                // Atualiza o card na tela imediatamente
+                const card = document.getElementById(`task-${currentEditingTaskId}`);
+                if (card) {
+                    card.querySelector('p').textContent = updatedTask.title;
+                    card.className = `task-card urgency-${rawUrgency}`;
+                    const tag = card.querySelector('.urgency-tag');
+                    if(tag) tag.textContent = rawUrgency;
+                    
+                    // Atualiza datasets para futuras edições sem recarregar
+                    card.dataset.title = updatedTask.title;
+                    card.dataset.priority = updatedTask.priority;
+                    
+                    // Recarrega lista para garantir consistência total
+                    loadAndRenderTasks(); 
+                }
+            } else {
+                // === MODO CRIAÇÃO (POST) ===
+                console.log("Criando nova tarefa...");
+                taskData.userId = userId;
+                taskData.dashboardId = dashboardId;
+                
+                const savedTask = await createTask(taskData, token);
+                addTaskToScreen(savedTask, COLUMN_MAP['FAZER']);
+            }
 
-            addTaskToScreen(savedTask, COLUMN_MAP['FAZER']);
             clearCreateForm();
             toggleModal(ui.createModal.overlay, false);
 
         } catch (error) {
-            console.error("Erro na criação:", error);
-            alert("Erro ao salvar. Tente uma imagem menor.");
+            console.error("Erro ao salvar:", error);
+            alert("Erro ao salvar: " + error.message);
         }
     }
 
     function setupEventListeners() {
+        // AQUI ESTAVA O PROBLEMA: Havia dois listeners para o mesmo botão.
+        // Agora unificamos em um só que garante o reset para "Criar".
         if (ui.btnOpenCreate) {
             ui.btnOpenCreate.addEventListener("click", () => {
+                currentEditingTaskId = null; // Reseta para modo CRIAÇÃO
+                clearCreateForm();
+                
+                // Ajusta textos do modal para "Nova Tarefa"
+                const modalTitle = document.querySelector('#create-modal h2');
+                if(modalTitle) modalTitle.textContent = "Nova Tarefa";
+                
+                const submitBtn = document.querySelector('#create-task-form button[type="submit"]');
+                if(submitBtn) submitBtn.textContent = "Criar";
+
                 toggleModal(ui.createModal.overlay, true);
             });
         } else {
             console.error("Botão 'btn-open-create' não encontrado no HTML!");
         }
 
+        // Submit do formulário (funciona para Criar e Editar)
         if (ui.createModal.form) {
             ui.createModal.form.addEventListener("submit", handleCreateSubmit);
         }
 
-        setupModalCloseLogic(ui.createModal.overlay, ui.createModal.closeBtn);
-        setupModalCloseLogic(ui.viewModal.overlay, ui.viewModal.closeBtn);
-
+        // Logout
         if (ui.btnLogout) {
             ui.btnLogout.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -165,6 +189,41 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = "/LoginPage.html"; 
             });
         }
+
+        // Botão EXCLUIR (dentro do modal de visualização)
+        const btnDelete = document.getElementById("btn-delete-task");
+        if (btnDelete) {
+            btnDelete.addEventListener("click", async () => {
+                if (!currentEditingTaskId) return;
+
+                if (confirm("Tem certeza que deseja excluir esta tarefa?")) {
+                    try {
+                        await deleteTask(currentEditingTaskId, token);
+                        
+                        // Remove da tela
+                        const card = document.getElementById(`task-${currentEditingTaskId}`);
+                        if (card) card.remove();
+                        
+                        toggleModal(ui.viewModal.overlay, false);
+                    } catch (error) {
+                        alert("Erro ao excluir: " + error.message);
+                    }
+                }
+            });
+        }
+
+        // Botão EDITAR (dentro do modal de visualização)
+        const btnEdit = document.getElementById("btn-edit-task");
+        if (btnEdit) {
+            btnEdit.addEventListener("click", () => {
+                toggleModal(ui.viewModal.overlay, false); // Fecha "Ver"
+                openEditModal(); // Abre "Editar"
+            });
+        }
+
+        // Fechar Modais (X e Overlay)
+        setupModalCloseLogic(ui.createModal.overlay, ui.createModal.closeBtn);
+        setupModalCloseLogic(ui.viewModal.overlay, ui.viewModal.closeBtn);
     }
 
     function setupModalCloseLogic(overlay, closeBtn) {
@@ -185,14 +244,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function addTaskToScreen(task, targetListElement) {
-        if (!targetListElement) {
-            console.error("Erro: Elemento de lista de destino não encontrado.");
-            return;
-        }
+        if (!targetListElement) return;
 
         const emptyMsg = targetListElement.querySelector('.empty-state-msg');
         if (emptyMsg) emptyMsg.remove();
 
+        // Passamos openViewModal como callback de clique
         const card = createTaskCardElement(task, openViewModal);
         enableDragAndDrop(card);
         
@@ -215,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function clearCreateForm() {
         ui.createModal.inputs.text.value = "";
-        ui.createModal.inputs.description.value = ""; // <--- 4. LIMPA O CAMPO DE DESCRIÇÃO
+        ui.createModal.inputs.description.value = "";
         ui.createModal.inputs.urgency.value = "baixa";
         ui.createModal.inputs.image.value = "";
     }
@@ -229,7 +286,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
+    // Abre modal de visualização e define o ID da tarefa atual
     function openViewModal(task) {
+        currentEditingTaskId = task.id; // IMPORTANTE: Guarda ID para edição/exclusão
+
         if(ui.viewModal.title) ui.viewModal.title.textContent = task.title;
         
         if(ui.viewModal.priority) {
@@ -237,9 +297,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (ui.viewModal.description) {
-            ui.viewModal.description.textContent = task.description || "Sem descrição."; // Fallback visual
+            ui.viewModal.description.textContent = task.description || "Sem descrição.";
         }
 
+        // Renderiza Imagem se existir
         if(ui.viewModal.imageContainer) {
             ui.viewModal.imageContainer.innerHTML = '';
             if (task.imageBase64) {
@@ -260,5 +321,34 @@ document.addEventListener("DOMContentLoaded", () => {
         if (p === 1) return 'Alta';
         if (p === 2) return 'Média';
         return 'Baixa';
+    }
+
+    // Prepara formulário para edição
+    function openEditModal() {
+        const card = document.getElementById(`task-${currentEditingTaskId}`);
+        if (!card) return;
+
+        // Recupera valores atuais do modal de visualização
+        const currentTitle = ui.viewModal.title.textContent;
+        const currentDesc = ui.viewModal.description.textContent;
+        const currentPriority = card.dataset.priority; 
+        
+        // Preenche o formulário
+        ui.createModal.inputs.text.value = currentTitle;
+        ui.createModal.inputs.description.value = (currentDesc === "Sem descrição.") ? "" : currentDesc;
+        
+        let priorityVal = 'baixa';
+        if (currentPriority == 1) priorityVal = 'alta';
+        if (currentPriority == 2) priorityVal = 'media';
+        ui.createModal.inputs.urgency.value = priorityVal;
+
+        // Ajusta UI do modal
+        const modalTitle = document.querySelector('#create-modal h2');
+        if(modalTitle) modalTitle.textContent = "Editar Tarefa";
+        
+        const submitBtn = document.querySelector('#create-task-form button[type="submit"]');
+        if(submitBtn) submitBtn.textContent = "Salvar Alterações";
+
+        toggleModal(ui.createModal.overlay, true);
     }
 });

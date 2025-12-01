@@ -10,36 +10,36 @@ import com.IFC.BCC2025.to_do_list.repository.UserRepository;
 
 @Service
 public class UserService {
-    
+
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User createUser(String name, String email, String password) throws Exception{
-        User newUser = new User(name, email, gerarHash(password));
+    public User createUser(String name, String email, String password) throws Exception {
+        User newUser = new User(name, email, gerarHash(password, email));
         if (userRepository.findByEmail(email) != null) {
             throw new SecurityException("Email já cadastrado");
         }
-        return userRepository.save(newUser); 
+        return userRepository.save(newUser);
     }
 
-    public User logarUser(String email, String password) throws Exception{
-        User user = userRepository.findByEmailAndPassword(email, gerarHash(password));
+    public User logarUser(String email, String password) throws Exception {
+        User user = userRepository.findByEmailAndPassword(email, gerarHash(password, email));
         if (user == null) {
             throw new SecurityException("Email ou senha inválidos");
-        }else{
+        } else {
             return user;
         }
     }
 
-    private String gerarHash(String senha) {
+    private String gerarHash(String senha, String email) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(senha.getBytes());
+            byte[] hash = md.digest((senha + email).getBytes());
             StringBuilder hexString = new StringBuilder();
-            for(byte b : hash){
+            for (byte b : hash) {
                 hexString.append(String.format("%02x", b));
             }
             return hexString.toString();

@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,26 +22,24 @@ public class Dashboard {
 
     @ManyToOne
     @JoinColumn(name = "fk_user_id")
-    @JsonIgnore 
+    @JsonIgnore
     private User user;
-    
-    @OneToMany(mappedBy = "dashboard")
+
+    @OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
-
-    public Dashboard() {}
+    public Dashboard() {
+    }
 
     public Dashboard(String dashboardName, User user) {
         this.dashboardName = dashboardName;
         this.user = user;
     }
-    
-    
+
     public Long getId() {
         return id;
     }
-    
-    
+
     public String getDashboardName() {
         return dashboardName;
     }
