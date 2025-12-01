@@ -4,8 +4,15 @@ import { fetchTasks, createTask, updateTaskContent, deleteTask } from './Compone
 
 const PRIORITY_MAP = { 'alta': 1, 'media': 2, 'baixa': 3 };
 
+// Mapeamento de Cores (Baseado no style.css)
+const PRIORITY_COLORS = {
+    1: '#E74C3C', // Alta (Vermelho)
+    2: '#F39C12', // Média (Laranja)
+    3: '#00BFFF'  // Baixa (Azul)
+};
+
 document.addEventListener("DOMContentLoaded", () => {
-    let currentEditingTaskId = null; // Variável para controlar se estamos Editando (ID) ou Criando (null)
+    let currentEditingTaskId = null; 
     const urlParams = new URLSearchParams(window.location.search);
     const dashboardId = urlParams.get('dashboardId');
     const userId = localStorage.getItem('loggedInUserId');
@@ -67,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const tasks = await fetchTasks(dashboardId, token);
 
-            // Limpa as colunas antes de renderizar para não duplicar visualmente
             Object.values(COLUMN_MAP).forEach(listElement => {
                 if (listElement) listElement.innerHTML = '';
             });
@@ -78,10 +84,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             tasks.forEach(task => {
-                // Se o status vier nulo do banco, joga para FAZER como segurança
                 const statusKey = task.status || 'FAZER';
                 const listElement = COLUMN_MAP[statusKey] || COLUMN_MAP['FAZER'];
-                
                 addTaskToScreen(task, listElement); 
             });
             
@@ -107,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const base64Image = file ? await convertImageToBase64(file) : null;
 
-            // Objeto base da tarefa
             const taskData = {
                 title: title,
                 description: description,
@@ -116,11 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (base64Image) taskData.image = base64Image;
 
             if (currentEditingTaskId) {
-                // === MODO EDIÇÃO (PATCH) ===
-                console.log(`Editando tarefa ${currentEditingTaskId}...`);
+                // === MODO EDIÇÃO ===
                 const updatedTask = await updateTaskContent(currentEditingTaskId, taskData, token);
                 
-                // Atualiza o card na tela imediatamente
                 const card = document.getElementById(`task-${currentEditingTaskId}`);
                 if (card) {
                     card.querySelector('p').textContent = updatedTask.title;
@@ -128,16 +129,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     const tag = card.querySelector('.urgency-tag');
                     if(tag) tag.textContent = rawUrgency;
                     
-                    // Atualiza datasets para futuras edições sem recarregar
                     card.dataset.title = updatedTask.title;
                     card.dataset.priority = updatedTask.priority;
                     
-                    // Recarrega lista para garantir consistência total
                     loadAndRenderTasks(); 
                 }
             } else {
-                // === MODO CRIAÇÃO (POST) ===
-                console.log("Criando nova tarefa...");
+                // === MODO CRIAÇÃO ===
                 taskData.userId = userId;
                 taskData.dashboardId = dashboardId;
                 
@@ -155,14 +153,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function setupEventListeners() {
-        // AQUI ESTAVA O PROBLEMA: Havia dois listeners para o mesmo botão.
-        // Agora unificamos em um só que garante o reset para "Criar".
         if (ui.btnOpenCreate) {
             ui.btnOpenCreate.addEventListener("click", () => {
-                currentEditingTaskId = null; // Reseta para modo CRIAÇÃO
+                currentEditingTaskId = null;
                 clearCreateForm();
                 
-                // Ajusta textos do modal para "Nova Tarefa"
                 const modalTitle = document.querySelector('#create-modal h2');
                 if(modalTitle) modalTitle.textContent = "Nova Tarefa";
                 
@@ -171,16 +166,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 toggleModal(ui.createModal.overlay, true);
             });
-        } else {
-            console.error("Botão 'btn-open-create' não encontrado no HTML!");
         }
 
-        // Submit do formulário (funciona para Criar e Editar)
         if (ui.createModal.form) {
             ui.createModal.form.addEventListener("submit", handleCreateSubmit);
         }
 
-        // Logout
         if (ui.btnLogout) {
             ui.btnLogout.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -190,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Botão EXCLUIR (dentro do modal de visualização)
+        // Botão EXCLUIR
         const btnDelete = document.getElementById("btn-delete-task");
         if (btnDelete) {
             btnDelete.addEventListener("click", async () => {
@@ -200,7 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     try {
                         await deleteTask(currentEditingTaskId, token);
                         
-                        // Remove da tela
                         const card = document.getElementById(`task-${currentEditingTaskId}`);
                         if (card) card.remove();
                         
@@ -212,16 +202,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Botão EDITAR (dentro do modal de visualização)
+        // Botão EDITAR
         const btnEdit = document.getElementById("btn-edit-task");
         if (btnEdit) {
             btnEdit.addEventListener("click", () => {
-                toggleModal(ui.viewModal.overlay, false); // Fecha "Ver"
-                openEditModal(); // Abre "Editar"
+                toggleModal(ui.viewModal.overlay, false);
+                openEditModal();
             });
         }
 
-        // Fechar Modais (X e Overlay)
         setupModalCloseLogic(ui.createModal.overlay, ui.createModal.closeBtn);
         setupModalCloseLogic(ui.viewModal.overlay, ui.viewModal.closeBtn);
     }
@@ -249,7 +238,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const emptyMsg = targetListElement.querySelector('.empty-state-msg');
         if (emptyMsg) emptyMsg.remove();
 
-        // Passamos openViewModal como callback de clique
         const card = createTaskCardElement(task, openViewModal);
         enableDragAndDrop(card);
         
@@ -286,9 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    // Abre modal de visualização e define o ID da tarefa atual
+    // --- FUNÇÃO MODIFICADA PARA MUDAR A COR DO BOTÃO ---
     function openViewModal(task) {
-        currentEditingTaskId = task.id; // IMPORTANTE: Guarda ID para edição/exclusão
+        currentEditingTaskId = task.id;
 
         if(ui.viewModal.title) ui.viewModal.title.textContent = task.title;
         
@@ -300,7 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ui.viewModal.description.textContent = task.description || "Sem descrição.";
         }
 
-        // Renderiza Imagem se existir
         if(ui.viewModal.imageContainer) {
             ui.viewModal.imageContainer.innerHTML = '';
             if (task.imageBase64) {
@@ -314,6 +301,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // LÓGICA DE COR DO BOTÃO EDITAR
+        const btnEdit = document.getElementById("btn-edit-task");
+        if (btnEdit) {
+            // Pega a cor baseada na prioridade (padrão azul/baixa se não encontrar)
+            const color = PRIORITY_COLORS[task.priority] || PRIORITY_COLORS[3];
+            btnEdit.style.backgroundColor = color;
+            
+            // Ajuste visual para hover (opcional, escurece levemente via filtro)
+            btnEdit.onmouseenter = () => { btnEdit.style.filter = "brightness(90%)"; };
+            btnEdit.onmouseleave = () => { btnEdit.style.filter = "brightness(100%)"; };
+        }
+
         toggleModal(ui.viewModal.overlay, true);
     }
 
@@ -323,17 +322,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return 'Baixa';
     }
 
-    // Prepara formulário para edição
     function openEditModal() {
         const card = document.getElementById(`task-${currentEditingTaskId}`);
         if (!card) return;
 
-        // Recupera valores atuais do modal de visualização
         const currentTitle = ui.viewModal.title.textContent;
         const currentDesc = ui.viewModal.description.textContent;
         const currentPriority = card.dataset.priority; 
         
-        // Preenche o formulário
         ui.createModal.inputs.text.value = currentTitle;
         ui.createModal.inputs.description.value = (currentDesc === "Sem descrição.") ? "" : currentDesc;
         
@@ -342,7 +338,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentPriority == 2) priorityVal = 'media';
         ui.createModal.inputs.urgency.value = priorityVal;
 
-        // Ajusta UI do modal
         const modalTitle = document.querySelector('#create-modal h2');
         if(modalTitle) modalTitle.textContent = "Editar Tarefa";
         

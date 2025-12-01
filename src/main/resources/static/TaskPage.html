@@ -84,25 +84,28 @@
         </div>
     </div>
 
-    <!-- 3. MODAL DE VISUALIZAÇÃO (Detalhes) -->
-    <!-- ATENÇÃO: IDs atualizados para bater com ui.viewModal no JS (ex: view-title em vez de modal-title) -->
-    <div id="view-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <span class="close-view-btn close-modal-btn">&times;</span>
-            
-            <h2 id="view-title">...</h2>
-            <p id="view-priority" style="font-weight: bold; margin-bottom: 10px;">...</p>
-            
-            <!-- Container da imagem -->
-            <div id="view-image-container"></div>
+        <div id="view-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <span class="close-view-btn close-modal-btn">&times;</span>
+                    
+                    <h2 id="view-title">...</h2>
+                    <p id="view-priority" style="font-weight: bold; margin-bottom: 10px;">...</p>
+                    
+                    <div id="view-image-container"></div>
 
-            <p id="view-description" style="margin-top: 15px; color: #666;">
-                ...
-            </p>
-        </div>
-    </div>
+                    <p id="view-description" style="margin-top: 15px; color: #666; margin-bottom: 20px;">
+                        ...
+                    </p>
 
-    <!-- SCRIPT PRINCIPAL -->
+                    <div class="modal-actions" style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid #eee; padding-top: 15px;">
+                        <button id="btn-edit-task" class="auth-button" style="background-color: #f39c12; width: auto;">Editar</button>
+                        <button id="btn-delete-task" class="auth-button" style="background-color: #e74c3c; width: auto;">Excluir</button>
+                    </div>
+                </div>
+            </div>
+
+
+
     <script type="module" src="js/TaskPage.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
