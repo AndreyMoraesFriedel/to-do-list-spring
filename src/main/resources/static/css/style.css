@@ -217,19 +217,65 @@ main {
     margin: 0; font-size: 1.1rem; white-space: nowrap;
 }
 
+
 .dashboard-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem; padding-bottom: 2rem;
+    display: flex;          
+    flex-wrap: nowrap;         
+    gap: 2rem;                
+    
+    overflow-x: auto;        
+    overflow-y: hidden;       
+    
+    padding: 1rem 0.5rem 2rem 0.5rem;
+    scroll-behavior: smooth;  
+    
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.dashboard-grid::-webkit-scrollbar {
+    height: 10px;            
+}
+
+.dashboard-grid::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+.dashboard-grid::-webkit-scrollbar-thumb {
+    background: var(--primary-cyan);
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+}
+
+.dashboard-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-cyan-hover); 
 }
 
 .dashboard-card {
-    background-color: var(--surface-white); border-radius: var(--card-radius); border: var(--card-border);
-    height: 200px; display: flex; flex-direction: column; text-decoration: none; color: inherit;
-    transition: all 0.3s ease; box-shadow: var(--shadow-primary); overflow: hidden;
+    background-color: var(--surface-white); 
+    border-radius: var(--card-radius); 
+    border: var(--card-border);
+    height: 220px;         
+    min-width: 300px;        
+    width: 300px;
+    flex: 0 0 auto;           
+    
+    display: flex; 
+    flex-direction: column; 
+    text-decoration: none; 
+    color: inherit;
+    transition: all 0.3s ease; 
+    box-shadow: var(--shadow-primary); 
+    overflow: hidden;
+    
+    scroll-snap-align: start; 
 }
 
 .dashboard-card:hover {
-    transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--primary-cyan);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-hover); 
+    border-color: var(--primary-cyan);
 }
 
 .card-visual {
@@ -413,4 +459,19 @@ main {
 
 .task-finished-pop {
     animation: popSuccess 0.4s ease-out;
+}
+
+.dashboard-card {
+    cursor: grab;
+}
+
+.dashboard-card:active {
+    cursor: grabbing;
+}
+
+.dragging {
+    opacity: 0.5;
+    border: 2px dashed var(--primary-cyan);
+    transform: scale(0.95);
+    box-shadow: none;
 }

@@ -10,6 +10,9 @@ const DOM = {
     btnCreate: document.getElementById('btn-create-dashboard')
 };
 
+// Variável global para rastrear o item sendo arrastado
+let draggedItem = null;
+
 // ==================================================================================
 // 1. SERVICE LAYER (Comunicação com API)
 // ==================================================================================
@@ -74,9 +77,13 @@ const DashboardService = {
 
 function createDashboardCard(dashboard) {
     const cardLink = document.createElement('a');
-    cardLink.className = 'dashboard-card';
+    // Adiciona classe 'draggable-item' para facilitar a seleção na lógica de drag
+    cardLink.className = 'dashboard-card draggable-item';
     cardLink.href = `/TaskPage.html?dashboardId=${dashboard.id}`;
     cardLink.id = `card-${dashboard.id}`;
+    
+    // ATIVA O ARRASTAR
+    cardLink.draggable = true;
 
     cardLink.innerHTML = `
         <div class="card-visual">
@@ -97,6 +104,17 @@ function createDashboardCard(dashboard) {
 
     // Event Delegation para botões dentro do card
     cardLink.addEventListener('click', (e) => handleCardClick(e, dashboard));
+
+    // --- NOVOS EVENTOS DE DRAG-AND-DROP NO CARD ---
+    cardLink.addEventListener('dragstart', () => {
+        draggedItem = cardLink;
+        cardLink.classList.add('dragging'); // Adiciona estilo visual (ex: opacidade)
+    });
+
+    cardLink.addEventListener('dragend', () => {
+        cardLink.classList.remove('dragging');
+        draggedItem = null;
+    });
 
     return cardLink;
 }
@@ -126,6 +144,25 @@ function renderDashboardList(dashboards) {
     const grid = document.createElement('div');
     grid.className = 'dashboard-grid';
     
+    // --- LÓGICA DE DRAG-AND-DROP NA GRID (CONTAINER) ---
+    grid.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Necessário para permitir o drop
+        
+        // Calcula qual elemento está logo DEPOIS da posição atual do mouse (eixo X)
+        const afterElement = getDragAfterElement(grid, e.clientX);
+        
+        const draggable = document.querySelector('.dragging');
+        if (!draggable) return;
+
+        if (afterElement == null) {
+            // Se não há elemento depois, adiciona ao final da lista
+            grid.appendChild(draggable);
+        } else {
+            // Insere antes do elemento encontrado
+            grid.insertBefore(draggable, afterElement);
+        }
+    });
+
     dashboards.forEach(dash => {
         grid.appendChild(createDashboardCard(dash));
     });
@@ -133,6 +170,34 @@ function renderDashboardList(dashboards) {
     DOM.dashboardList.appendChild(grid);
     updateDashboardCount(); // Atualiza contador com o total
 }
+
+/**
+ * Função que calcula onde soltar o card baseado na posição X do mouse.
+ * Retorna o elemento que deve ficar DEPOIS do card que estamos arrastando.
+ */
+function getDragAfterElement(container, x) {
+    // Seleciona todos os cards arrastáveis que NÃO são o que está sendo movido agora
+    const draggableElements = [...container.querySelectorAll('.draggable-item:not(.dragging)')];
+
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        
+        // Calcula o centro horizontal do box
+        const boxCenter = box.left + box.width / 2;
+        
+        // Diferença entre o cursor do mouse e o centro do elemento
+        const offset = x - boxCenter;
+
+        // Queremos o offset que seja negativo (mouse à esquerda do centro) 
+        // e o mais próximo de 0 (o elemento imediatamente à direita)
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
 
 // ==================================================================================
 // 3. HANDLERS & LOGIC
