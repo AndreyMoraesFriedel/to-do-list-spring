@@ -59,7 +59,7 @@ Acesse: [https://start.spring.io](https://start.spring.io)
 - **Language:** Java
 - **Spring Boot:** Última versão estável
 - **Packaging:** Jar
-- **Java:** 17 ou 21
+- **Java:** 21+
 
 ### Dependências obrigatórias:
 - Spring Web
