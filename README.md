@@ -320,8 +320,16 @@ Para ambiente gráfico de banco de dados:
 
 **Para conectar (DBeaver ou HeidiSQL):**
 
+<<<<<<< HEAD
 - **Host:** localhost
 - **Port:** 3306
 - **Database:** todolist
 - **Username:** root
 - **Password:** (Vazio ou a senha que definiu na instalação)
+=======
+  * **Host:** localhost
+  * **Port:** 3306
+  * **Database:** todolist
+  * **Username:** root
+  * **Password:** (Vazio ou a senha que definiu na instalação)
+>>>>>>> 4bd45ba0376eee74e5f454edea36060d74105c3e
