@@ -229,7 +229,7 @@ No Windows, o MariaDB geralmente é instalado como um **Serviço** que inicia au
       * **Language:** Java
       * **Spring Boot:** Versão estável (ex: 3.x.x)
       * **Packaging:** Jar
-      * **Java:** 17 ou 21 (o mesmo que você instalou)
+      * **Java:** 21
 3.  **Dependências:**
       * Spring Web
       * Spring Data JPA
