@@ -30,41 +30,41 @@ public class TaskService {
     }
 
     public Task createTask(String title, String description, Integer priority, TaskStatus taskStatus, Long userId,
-            Long dashboardId, String image) throws Exception{
+        Long dashboardId, String image) throws Exception{
         User user = getUserById(userId);
         Dashboard dash = getDashboardById(dashboardId);
         Task newTask = new Task(title, description, priority, taskStatus, user, dash, image);
         return taskRepository.save(newTask);
     }
 
-    public User getUserById(Long userId) throws Exception{
+    public User getUserById(Long userId) {
         Long nonNullUserId = Objects.requireNonNull(userId, "userId must not be null");
         Optional<User> user = userRepository.findById(nonNullUserId);
-        if(!user.isPresent()){
+        if(user.isEmpty()){
             throw new SecurityException("Usuário não encontrado");
         }
         return user.get();
     }
 
-    public Dashboard getDashboardById(Long dashId) throws Exception{
+    public Dashboard getDashboardById(Long dashId) {
         Long nonNullDashId = Objects.requireNonNull(dashId, "dashId must not be null");
         Optional<Dashboard> dash = dashboardRepository.findById(nonNullDashId);
-        if(!dash.isPresent()){
+        if(dash.isEmpty()){
             throw new SecurityException("Dashboard não encontrada");
         }
         return dash.get();
     }
 
-    public Task getTaskById(Long taskId) throws Exception{
+    public Task getTaskById(Long taskId) {
         Long nonNullTaskId = Objects.requireNonNull(taskId, "taskId must not be null");
         Optional<Task> task = taskRepository.findById(nonNullTaskId);
-        if(!task.isPresent()){
+        if(task.isEmpty()){
             throw new SecurityException("Task não encontrada");
         }
         return task.get();
     }
 
-    public List<Task> getAllTasks(Long dashboardId) throws Exception{
+    public List<Task> getAllTasks(Long dashboardId) {
         Dashboard dashboard = getDashboardById(dashboardId);
         return taskRepository.findByDashboardId(dashboard.getId());
     }
@@ -82,7 +82,7 @@ public class TaskService {
         if(taskStatus != null) task.setStatus(taskStatus);
         if(image != null) task.setImage(image);
         
-        return taskRepository.save(task);
+        return taskRepository.saveAndFlush(task);
     }
 
     public void deleteTask(Long taskId) throws Exception{

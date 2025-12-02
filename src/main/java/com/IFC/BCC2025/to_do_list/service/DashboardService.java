@@ -20,43 +20,42 @@ public class DashboardService {
         this.userRepository = userRepository;
     }
 
-    public Dashboard createDashboard(String dashboardName, Long userId) throws Exception{
+    public Dashboard createDashboard(String dashboardName, Long userId){
         User user = getUserById(userId);
-        Dashboard dash = new Dashboard(dashboardName, user);      
-        Dashboard savedDashboard = dashboardRepository.save(dash);
-        return savedDashboard;
+        Dashboard dash = new Dashboard(dashboardName, user);
+        return dashboardRepository.save(dash);
     }
 
-    public List<Dashboard> getDashboardByUserId(Long userId) throws Exception{
+    public List<Dashboard> getDashboardByUserId(Long userId){
         User user = getUserById(userId);
         return dashboardRepository.findByUserId(user.getId());
     }
 
-    public Dashboard getDashboardById(Long dashId) throws Exception{
+    public Dashboard getDashboardById(Long dashId){
         java.util.Objects.requireNonNull(dashId, "dashId must not be null");
         Optional<Dashboard> dash = dashboardRepository.findById(dashId);
-        if(!dash.isPresent()){
+        if(dash.isEmpty()){
             throw new SecurityException("Dashboard não encontrada");
         }
         return dash.get();
     }
 
-    public Dashboard updateDashboardName(Long dashId, String dashName) throws Exception{
+    public Dashboard updateDashboardName(Long dashId, String dashName){
         Dashboard dash = getDashboardById(dashId);
         dash.setDashboardName(dashName);
         return dashboardRepository.save(dash);
     }
 
-    public void deleteDashboard(Long dashId) throws Exception{
+    public void deleteDashboard(Long dashId){
         java.util.Objects.requireNonNull(dashId, "dashId must not be null");
         getDashboardById(dashId);
         dashboardRepository.deleteById(dashId);
     }
 
-    public User getUserById(Long userId) throws Exception{
+    public User getUserById(Long userId){
         java.util.Objects.requireNonNull(userId, "dashId must not be null");
         Optional<User> user = userRepository.findById(userId);
-        if(!user.isPresent()){
+        if(user.isEmpty()){
             throw new SecurityException("Usuário não encontrado");
         }
         return user.get();

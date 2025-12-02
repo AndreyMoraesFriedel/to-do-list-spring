@@ -1,8 +1,3 @@
-/**
- * * @param {Object} taskObj Objeto de tarefa retornado pelo Backend.
- * @param {Function} onCardClick Função a ser executada ao clicar no cartão.
- * @returns {HTMLElement} O elemento DIV que representa o cartão da tarefa.
- */
 export function createTaskCardElement(taskObj, onCardClick) {
     let urgencyClass = 'baixa';
     // Determina a classe de CSS baseada no campo priority (1=alta, 2=media)

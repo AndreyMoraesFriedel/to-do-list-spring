@@ -28,8 +28,8 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks(@RequestParam(name = "dashboardId") Long dashboardId) throws Exception {
-    List<Task> tasks = taskService.getAllTasks(dashboardId);
-    return ResponseEntity.ok(tasks);
+        List<Task> tasks = taskService.getAllTasks(dashboardId);
+        return ResponseEntity.ok(tasks);
     }
 
     @PostMapping("/{userId}/{dashId}")
@@ -66,8 +66,8 @@ public class TaskController {
     }
 
     @DeleteMapping("/dashboard/{id}")
-    public ResponseEntity<Void> deleteTaskByDashId(@PathVariable Long dashId) throws Exception{
-        taskService.deleteTaskByDashId(dashId);
+    public ResponseEntity<Void> deleteTaskByDashId(@PathVariable Long id) throws Exception{
+        taskService.deleteTaskByDashId(id);
         return ResponseEntity.ok().build();
     }
 }

@@ -17,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(String name, String email, String password) throws Exception {
+    public User createUser(String name, String email, String password) {
         User newUser = new User(name, email, gerarHash(password, email));
         if (userRepository.findByEmail(email) != null) {
             throw new SecurityException("Email já cadastrado");
@@ -25,7 +25,7 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public User logarUser(String email, String password) throws Exception {
+    public User logarUser(String email, String password) {
         User user = userRepository.findByEmailAndPassword(email, gerarHash(password, email));
         if (user == null) {
             throw new SecurityException("Email ou senha inválidos");

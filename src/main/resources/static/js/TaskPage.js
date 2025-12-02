@@ -4,11 +4,10 @@ import { fetchTasks, createTask, updateTaskContent, deleteTask } from './Compone
 
 const PRIORITY_MAP = { 'alta': 1, 'media': 2, 'baixa': 3 };
 
-// Mapeamento de Cores (Baseado no style.css)
 const PRIORITY_COLORS = {
-    1: '#E74C3C', // Alta (Vermelho)
-    2: '#F39C12', // Média (Laranja)
-    3: '#00BFFF'  // Baixa (Azul)
+    1: '#E74C3C',
+    2: '#F39C12',
+    3: '#00BFFF'
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -55,20 +54,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // 1. Validação de Sessão
     if (!dashboardId || !userId) {
         alert("Sessão inválida. Retornando...");
         window.location.href = "/MainPage.html";
         return;
     }
 
-    // 2. Inicialização
     setupDropZones(ui.lists.all, token);
     setupEventListeners();
     loadAndRenderTasks();
-
-
-    // --- FUNÇÕES ---
 
     async function loadAndRenderTasks() {
         try {
@@ -119,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (base64Image) taskData.image = base64Image;
 
             if (currentEditingTaskId) {
-                // === MODO EDIÇÃO ===
                 const updatedTask = await updateTaskContent(currentEditingTaskId, taskData, token);
                 
                 const card = document.getElementById(`task-${currentEditingTaskId}`);
@@ -135,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     loadAndRenderTasks(); 
                 }
             } else {
-                // === MODO CRIAÇÃO ===
                 taskData.userId = userId;
                 taskData.dashboardId = dashboardId;
                 
@@ -181,7 +173,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Botão EXCLUIR
         const btnDelete = document.getElementById("btn-delete-task");
         if (btnDelete) {
             btnDelete.addEventListener("click", async () => {
@@ -202,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Botão EDITAR
         const btnEdit = document.getElementById("btn-edit-task");
         if (btnEdit) {
             btnEdit.addEventListener("click", () => {
@@ -273,8 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
             reader.onerror = error => reject(error);
         });
     }
-    
-    // --- FUNÇÃO MODIFICADA PARA MUDAR A COR DO BOTÃO ---
+
     function openViewModal(task) {
         currentEditingTaskId = task.id;
 
@@ -301,14 +290,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // LÓGICA DE COR DO BOTÃO EDITAR
         const btnEdit = document.getElementById("btn-edit-task");
         if (btnEdit) {
-            // Pega a cor baseada na prioridade (padrão azul/baixa se não encontrar)
             const color = PRIORITY_COLORS[task.priority] || PRIORITY_COLORS[3];
             btnEdit.style.backgroundColor = color;
-            
-            // Ajuste visual para hover (opcional, escurece levemente via filtro)
+
             btnEdit.onmouseenter = () => { btnEdit.style.filter = "brightness(90%)"; };
             btnEdit.onmouseleave = () => { btnEdit.style.filter = "brightness(100%)"; };
         }

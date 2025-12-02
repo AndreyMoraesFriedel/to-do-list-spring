@@ -54,8 +54,6 @@ export async function updateTaskStatus(taskId, newStatus, token) {
     }
 }
 
-// --- FUNÇÕES QUE FALTAVAM ---
-
 export async function updateTaskContent(taskId, taskData, token) {
     const response = await fetch(`${API_TASKS_URL}/${taskId}`, {
         method: 'PATCH',
@@ -63,13 +61,11 @@ export async function updateTaskContent(taskId, taskData, token) {
             'Content-Type': 'application/json',
             'Authorization': token ? `Bearer ${token}` : ''
         },
-        // Mapeia os dados do JS para o DTO do Java
         body: JSON.stringify({
             title: taskData.title,
             description: taskData.description,
             priority: taskData.priority,
             image: taskData.image
-            // taskStatus não é enviado aqui se for edição de conteúdo
         })
     });
 
