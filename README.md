@@ -172,10 +172,10 @@ sudo pacman -S dbeaver
 
 ## Tecnologias Utilizadas
 
-| Tecnologia         | Versão       |
+| Tecnologia        | Versão       |
 |-------------------|--------------|
 | Arch Linux        | Rolling      |
-| Java              | 17 ou 21     |
+| Java              | 21+          |
 | Spring Boot       | 3.x          |
 | Spring Security   | Incluído     |
 | MariaDB           | 10.x+        |
