@@ -112,7 +112,7 @@ src/main/java/com/seuprojeto/teladelogin/
 │   └── SecurityConfig.java
 ├── model/
 │   └── User.java
-├── dto/
+|   └── dto/
 │   └── LoginRequest.java
 ├── repository/
 │   └── UserRepository.java
