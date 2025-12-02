@@ -1,24 +1,19 @@
 import { updateTaskStatus } from './api.js';
 
 let draggedItem = null;
+let placeholder = null;
 
-// Mapeamento: ID do HTML -> Enum do Backend
 const STATUS_MAP = {
     'todo-list': 'FAZER',
     'doing-list': 'FAZENDO',
     'done-list': 'FEITO'
 };
 
-/**
- * Ativa a capacidade de arrastar em um cartão de tarefa.
- */
 export function enableDragAndDrop(cardElement) {
     cardElement.addEventListener("dragstart", (e) => {
         draggedItem = cardElement;
-        // Transfere o ID da div (ex: "task-1")
         e.dataTransfer.setData('text/plain', cardElement.id);
         
-        // Timeout para que o elemento original não suma imediatamente durante o drag
         setTimeout(() => cardElement.classList.add("dragging"), 0);
     });
 
@@ -27,22 +22,40 @@ export function enableDragAndDrop(cardElement) {
             draggedItem.classList.remove("dragging");
             draggedItem = null;
         }
+        if (placeholder && placeholder.parentNode) {
+            placeholder.parentNode.removeChild(placeholder);
+        }
+        placeholder = null;
     });
 }
 
-/**
- * Configura as zonas onde os cartões podem ser soltos (as colunas).
- */
 export function setupDropZones(zonesNodeList, token) {
     zonesNodeList.forEach(zone => {
-        // Necessário para permitir o "drop"
-        zone.addEventListener("dragover", (e) => e.preventDefault());
+        zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            
+            const afterElement = getDragAfterElement(zone, e.clientY);
+            
+            if (!placeholder) {
+                placeholder = document.createElement('div');
+                placeholder.className = 'drop-placeholder';
+            }
+
+            if (afterElement == null) {
+                zone.appendChild(placeholder);
+            } else {
+                zone.insertBefore(placeholder, afterElement);
+            }
+        });
 
         zone.addEventListener("drop", async (e) => {
             e.preventDefault();
 
+            if (placeholder && placeholder.parentNode) {
+                placeholder.parentNode.removeChild(placeholder);
+            }
+
             const rawTaskId = e.dataTransfer.getData('text/plain');
-            // Remove o prefixo 'task-' para obter apenas o ID numérico
             const taskId = rawTaskId.replace('task-', '');
             
             const draggable = document.getElementById(rawTaskId);
@@ -52,19 +65,18 @@ export function setupDropZones(zonesNodeList, token) {
             const newStatusKey = zone.id;
             const newStatusValue = STATUS_MAP[newStatusKey];
 
-            // Se soltou em uma zona válida conhecida
             if (newStatusValue) {
-                // 1. Atualização Otimista (Visual primeiro)
-                // Ao mover o elemento para a nova div (zone), o CSS específico daquela coluna
-                // (#doing-list ou #done-list) aplicará a cor correta automaticamente e permanentemente.
-                zone.appendChild(draggable);
+                const afterElement = getDragAfterElement(zone, e.clientY);
+                if (afterElement == null) {
+                    zone.appendChild(draggable);
+                } else {
+                    zone.insertBefore(draggable, afterElement);
+                }
                 
-                // 2. Verifica se a tarefa foi concluída para rodar o efeito
                 if (newStatusValue === 'FEITO') {
                     triggerSuccessEffect(draggable);
                 }
 
-                // 3. Persistência no Backend
                 try {
                     await updateTaskStatus(taskId, newStatusValue, token);
                     console.log(`[Sync] Task ${taskId} -> ${newStatusValue}`);
@@ -75,6 +87,22 @@ export function setupDropZones(zonesNodeList, token) {
             }
         });
     });
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.task-card:not(.dragging)')];
+
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        
+        const offset = y - box.top - box.height / 2;
+
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
 function triggerSuccessEffect(cardElement) {
