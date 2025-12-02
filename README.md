@@ -184,11 +184,6 @@ sudo pacman -S dbeaver
 
 ---
 
-**Projeto desenvolvido com carinho pelo grupo do IFC Blumenau**  
-Qualquer dúvida: abre uma issue que a gente te ajuda! 
-
-Feito com ☕ + Arch Linux + muito btcfg
-
 # Tela de login básico (Versão Windows)
 
 ## 1\. Configuração do Ambiente (Back-end)
