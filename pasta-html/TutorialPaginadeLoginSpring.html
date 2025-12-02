@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial: Tela de Login com Spring Boot</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #00aaff;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --code-bg: #2d2d2d;
+            --code-text: #f8f8f2;
+            --context-bg: #e3f2fd;
+            --context-border: #2196f3;
+            --context-text: #0d47a1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .meta-info {
+            font-size: 0.9em;
+            color: #666;
+            background: #eef;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+            margin-top: 50px;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #444;
+            margin-top: 35px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        p, li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo para blocos de código */
+        .code-header {
+            background-color: #444;
+            color: #fff;
+            padding: 5px 15px;
+            font-size: 0.85em;
+            border-radius: 5px 5px 0 0;
+            font-family: Consolas, monospace;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 0 5px 5px 5px;
+            overflow-x: auto;
+            font-family: 'Fira Code', Consolas, monospace;
+            font-size: 0.9em;
+            margin-top: 0;
+            border: 1px solid #444;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: inherit;
+        }
+
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .img-placeholder {
+            background-color: #f8f9fa;
+            border: 2px dashed #ced4da;
+            color: #6c757d;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .img-placeholder span {
+            font-style: italic;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* Estilo para Contexto */
+        .context-box {
+            background-color: var(--context-bg);
+            border-left: 4px solid var(--context-border);
+            color: var(--context-text);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .context-title {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Tutorial Tela de Login</h1>
+        <div class="meta-info">
+            <strong>Instituto Federal Catarinense Campus Blumenau</strong><br>
+            Disciplina: Desenvolvimento Web<br>
+            Discentes: Andrey Moraes, Yuri Teixeira, João Gabriel, Reginaldo
+        </div>
+    </header>
+
+    <section id="backend">
+        <h2>Back-end</h2>
+
+        <h3>1. Instalação XAMPP</h3>
+        
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: O papel do XAMPP</span>
+            O Spring Boot é o framework da aplicação (Java), mas ele precisa de um local para armazenar os dados. O <strong>XAMPP</strong> é utilizado aqui pois instala facilmente um servidor de banco de dados (MySQL/MariaDB) na sua máquina local. Sem ele, a aplicação não teria onde salvar os usuários.
+        </div>
+
+        <p>Baixe e instale o XAMPP no site oficial: <a href="https://www.apachefriends.org/" target="_blank">https://www.apachefriends.org/</a></p>
+        <p>Abra o <strong>XAMPP Control Panel</strong> e ative o módulo <strong>MySQL</strong>.</p>
+        
+        <div class="img-placeholder">
+            <span>[Imagem do XAMPP Control Panel]</span> <img src="image.png" alt="">
+        </div>
+
+        <h3>2. Criar Projeto Spring</h3>
+
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: Spring Initializr</span>
+            Configurar um projeto Java manualmente é complexo. O <strong>Spring Initializr</strong> cria a estrutura base do projeto, já configurando o Maven (gerenciador de dependências) e as pastas corretas, garantindo que o projeto comece padronizado.
+        </div>
+
+        <p>Para construção de um projeto Spring, devemos acessar o site: <a href="https://start.spring.io/" target="_blank">https://start.spring.io/</a></p>
+        <p>Na configuração do projeto podemos definir partes do projeto como: tipo do projeto, metadados do projeto, dependências que serão usadas.</p>
+        <p>Adicione as mesma informações como está a imagem abaixo e ao final clique em <strong>GENERATE</strong> para obter o projeto compactado:</p>
+        
+        <div class="img-placeholder">
+            <span>[Imagem do Spring Initializr Configurado]</span> <img src="image(1).png" alt="">
+             Defina: Maven, Java, Jar, Java 21. Dependências: Spring Web, Spring Security.
+        </div>
+
+        <h3>3. Configuração do Ambiente (VS Code)</h3>
+        <p>Descompactar o projeto e abrir no VSCODE. Adicione as seguintes extensões no VSCODE:</p>
+        <ul>
+            <li>Extension Pack for Java</li>
+            <li>Maven for Java</li>
+            <li>Spring Boot Extension Pack</li>
+            <li>Live Server</li>
+            <li>Language Support for Java(TM) by Red Hat</li>
+        </ul>
+
+        <h3>4. Inserir Dependência via Maven</h3>
+        
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: Dependências Maven</span>
+            O arquivo <code>pom.xml</code> gerencia as bibliotecas externas.
+            <ul>
+                <li><strong>Data JPA:</strong> Traduz código Java para SQL.</li>
+                <li><strong>Security:</strong> Gerencia login e senhas.</li>
+                <li><strong>MariaDB Client:</strong> O driver ("motorista") que permite o Java conversar com o banco MariaDB.</li>
+            </ul>
+        </div>
+
+        <p>Para inserir dependências no projeto, como o driver com MariaDB, acesse: <a href="https://mvnrepository.com/" target="_blank">mvnrepository.com</a>. Exemplo MariaDB Java Client:</p>
+        
+        <div class="img-placeholder">
+            <span>[Imagem do site MVN Repository]</span> <img src="image(2).png" alt="">
+            Exemplo da busca pelo MariaDB Java Client 3.5.3
+        </div>
+
+        <p>É necessário acessar o arquivo <code>pom.xml</code> na raiz do projeto e modificar conforme o repositório online. Adicione as seguinte dependências:</p>
+
+        <div class="code-header">pom.xml</div>
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+        &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.mariadb.jdbc&lt;/groupId&gt;
+        &lt;artifactId&gt;mariadb-java-client&lt;/artifactId&gt;
+        &lt;version&gt;3.5.3&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-security-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+
+        <h3>5. Criação e Configuração com Banco de Dados</h3>
+
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: Application Properties</span>
+            Aqui configuramos onde o banco está (localhost:3306) e quem pode entrar (root). O comando <code>ddl-auto=update</code> é muito útil: ele cria as tabelas no banco automaticamente baseado no seu código Java.
+        </div>
+
+        <p>Dentro do diretório <code>resources</code>, acesse o arquivo <code>application.properties</code>, em seguida adicione:</p>
+
+        <div class="code-header">src/main/resources/application.properties</div>
+<pre><code>spring.application.name=proj-tela-login
+
+spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
+spring.datasource.username=root
+spring.datasource.password=
+
+spring.jpa.hibernate.ddl-auto=update</code></pre>
+
+        <p class="note"><strong>Obs:</strong> Em username e password, adicione conforme seu usuário root, deve ser igual com seu XAMPP.</p>
+
+        <p><strong>Recomendação:</strong> Para construir seu banco de dados, pode utilizar Gerenciador de Banco de Dados como o DBeaver, acesse e instale: <a href="https://dbeaver.io/" target="_blank">https://dbeaver.io/</a>.</p>
+        
+        <p>Após instalar, crie uma conexão com MariaDB:</p>
+        <div class="img-placeholder">
+            <span>[Imagem: Configuração de Conexão DBeaver]</span> <img src="image(3).png" alt="">
+            </div>
+
+        <p>Após criar a conexão, adicione o banco de dados “teladelogin” clicando em databases com botão direito e depois em Create New Database, abrirá uma tela para inserir o nome, em seguida dê OK:</p>
+        <div class="img-placeholder">
+            <span>[Imagem: Criação do Banco de Dados]</span> <img src="image(4).png" alt="">
+            </div>
+
+        <h3>6. Criar Security Config</h3>
+
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: O Guardião</span>
+            Essa classe define quem passa e quem é barrado.
+            <ul>
+                <li><code>permitAll()</code>: Libera acesso (ex: para carregar o CSS ou a tela de login sem senha).</li>
+                <li><code>anyRequest().authenticated()</code>: Bloqueia todo o resto até que o usuário logue.</li>
+                <li><code>csrf.disable()</code>: Desativado aqui para facilitar o teste da API via JavaScript.</li>
+            </ul>
+        </div>
+
+        <p>A partir da pasta raiz do projeto, dê o seguinte comando via terminal: <code>cd .\src\main\java\raiz\proj_tela_login\</code>.</p>
+        <p>Agora crie um diretório <code>config</code>, dentro de config crie o arquivo <code>SecurityConfig.java</code>, este arquivo será responsável pela permissão de acesso do projeto:</p>
+
+        <div class="code-header">src/main/java/raiz/proj_tela_login/config/SecurityConfig.java</div>
+<pre><code>package raiz.proj_tela_login.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/*.html").permitAll()
+                .requestMatchers("/error").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/LoginPage.html")
+                .permitAll()
+            )
+            .logout(logout -> logout.permitAll());
+
+        return http.build();
+    }
+}</code></pre>
+
+        <h3>7. Criar Model e DTO</h3>
+
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: Model vs DTO</span>
+            <ul>
+                <li><strong>Model (User):</strong> Representa a tabela real no banco de dados. O Spring usa isso para criar as colunas.</li>
+                <li><strong>DTO (Data Transfer Object):</strong> É um objeto simples usado apenas para transportar dados do Front-end para o Back-end, protegendo a estrutura real do banco.</li>
+            </ul>
+        </div>
+
+        <p>A partir do diretório <code>proj_tela_login</code>, crie o diretório <code>model</code>, dentro de model criei o arquivo <code>User.java</code>:</p>
+
+        <div class="code-header">src/main/java/raiz/proj_tela_login/model/User.java</div>
+<pre><code>package raiz.proj_tela_login.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @Column(unique = true)
+    private String email;
+
+    private String password;
+
+    public User() {}
+
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public Long getId() { return id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+}</code></pre>
+
+        <p>Em seguida, dentro do diretório model, crie o diretório <code>DTO</code>, posteriormente o arquivo <code>UserDTO.java</code>:</p>
+
+        <div class="code-header">src/main/java/raiz/proj_tela_login/model/DTO/UserDTO.java</div>
+<pre><code>package raiz.proj_tela_login.model.DTO;
+
+public class UserDTO {
+    private String name;
+    private String email;
+    private String password;
+
+    public UserDTO(){}
+
+    public UserDTO(String name, String email, String password){
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+}</code></pre>
+
+        <h3>8. Criar Repository</h3>
+        
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: JPA Repository</span>
+            Ao estender <code>JpaRepository</code>, ganhamos métodos prontos para o banco de dados (salvar, buscar, deletar) sem escrever SQL manual. O método <code>findByEmail</code> é criado "magicamente" pelo Spring apenas lendo o nome dele.
+        </div>
+
+        <p>A partir do diretório <code>proj_tela_login</code>, crie o diretório <code>repository</code>, dentro de repository criei o arquivo <code>UserRepository.java</code>:</p>
+
+        <div class="code-header">src/main/java/raiz/proj_tela_login/repository/UserRepository.java</div>
+<pre><code>package raiz.proj_tela_login.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import raiz.proj_tela_login.model.User;
+
+public interface UserRepository extends JpaRepository&lt;User, Long&gt; {
+    User findByEmailAndPassword(String email, String password);
+    User findByEmail(String email);
+}</code></pre>
+
+        <h3>9. Criar Service</h3>
+        
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: Regra de Negócio e Hash</span>
+            O Service contém a lógica. Note o método <code>gerarHash</code>. É crucial para segurança: ele transforma a senha (ex: "123") em um código criptografado (SHA-256) antes de salvar no banco. Assim, nem o administrador do banco consegue ler a senha do usuário.
+        </div>
+
+        <p>A partir do diretório <code>proj_tela_login</code>, crie o diretório <code>service</code>, dentro de service criei o arquivo <code>UserService.java</code>:</p>
+
+        <div class="code-header">src/main/java/raiz/proj_tela_login/service/UserService.java</div>
+<pre><code>package raiz.proj_tela_login.service;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import org.springframework.stereotype.Service;
+import raiz.proj_tela_login.model.User;
+import raiz.proj_tela_login.repository.UserRepository;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
+    public User createUser(String name, String email, String password) throws Exception{
+        User newUser = new User(name, email, gerarHash(password, email));
+        if (userRepository.findByEmail(email) != null) {
+            throw new SecurityException("Email já cadastrado");
+        }
+        return userRepository.save(newUser);
+    }
+
+    public User logarUser(String email, String password) throws Exception{
+        User user = userRepository.findByEmailAndPassword(email, gerarHash(password, email));
+        if (user == null) {
+            throw new SecurityException("Email ou senha inválidos");
+        } else {
+            return user;
+        }
+    }
+
+    private String gerarHash(String senha, String email) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest((senha+email).getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for(byte b : hash){
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Erro ao gerar hash", e);
+        }
+    }
+}</code></pre>
+
+        <h3>10. Criar Controller</h3>
+        
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: API REST</span>
+            O Controller é a "recepção" do Back-end.
+            <ul>
+                <li><code>@RestController</code>: Indica que responde dados (JSON) e não HTML.</li>
+                <li><code>@PostMapping("/login")</code>: Cria o endereço que o JavaScript vai chamar.</li>
+                <li><code>@CrossOrigin</code>: Permite que diferentes origens (browsers) acessem essa API sem bloqueios.</li>
+            </ul>
+        </div>
+
+        <p>A partir do diretório <code>proj_tela_login</code>, crie o diretório <code>controller</code>, dentro de controller criei o arquivo <code>AuthController.java</code>:</p>
+
+        <div class="code-header">src/main/java/raiz/proj_tela_login/controller/AuthController.java</div>
+<pre><code>package raiz.proj_tela_login.controller;
+
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import raiz.proj_tela_login.model.User;
+import raiz.proj_tela_login.model.DTO.UserDTO;
+import raiz.proj_tela_login.service.UserService;
+
+@RestController
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
+public class AuthController {
+
+    private final UserService userService;
+
+    public AuthController(UserService userService){
+        this.userService = userService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity&lt;User&gt; login(@RequestBody UserDTO body) throws Exception{
+        User user = userService.logarUser(body.getEmail(), body.getPassword());
+        return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity&lt;User&gt; register(@RequestBody UserDTO body) throws Exception {
+        User userSaved = userService.createUser(body.getName(), body.getEmail(), body.getPassword());
+        return ResponseEntity.ok(userSaved);
+    }
+}</code></pre>
+    </section>
+
+    <section id="frontend">
+        <h2>Front-end</h2>
+
+        <h3>1. Criar Página HTML</h3>
+        <p>A partir do diretório raiz do projeto, dê o seguinte comando: <code>cd .\src\main\resources\static\</code>.</p>
+        <p>Após isso, criei o arquivo <code>LoginPage.html</code>, dentro do arquivo adicione:</p>
+
+        <div class="code-header">src/main/resources/static/LoginPage.html</div>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-br"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Login | Cadastro&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="auth-container"&gt;
+    &lt;div id="login-form"&gt;
+        &lt;form&gt;
+            &lt;h2&gt;Login&lt;/h2&gt;
+            &lt;div class="input-group"&gt;
+                &lt;label for="login-email"&gt;Email&lt;/label&gt;
+                &lt;input type="email" id="login-email" required&gt;
+            &lt;/div&gt;
+            &lt;div class="input-group"&gt;
+                &lt;label for="login-password"&gt;Senha&lt;/label&gt;
+                &lt;input type="password" id="login-password" required&gt;
+            &lt;/div&gt;
+            &lt;button type="submit" class="auth-button"&gt;Entrar&lt;/button&gt;
+            &lt;p class="toggle-link"&gt;
+                Não tem uma conta? &lt;a href="#" id="show-register"&gt;Cadastre-se&lt;/a&gt;
+            &lt;/p&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+
+    &lt;div id="register-form" class="hidden"&gt;
+        &lt;form&gt;
+            &lt;h2&gt;Cadastre-se&lt;/h2&gt;
+            &lt;div class="input-group"&gt;
+                &lt;label for="reg-name"&gt;Nome&lt;/label&gt;
+                &lt;input type="text" id="reg-name" required&gt;
+            &lt;/div&gt;
+            &lt;div class="input-group"&gt;
+                &lt;label for="reg-email"&gt;Email&lt;/label&gt;
+                &lt;input type="email" id="reg-email" required&gt;
+            &lt;/div&gt;
+            &lt;div class="input-group"&gt;
+                &lt;label for="reg-password"&gt;Senha&lt;/label&gt;
+                &lt;input type="password" id="reg-password" required&gt;
+            &lt;/div&gt;
+            &lt;button type="submit" class="auth-button"&gt;Cadastrar&lt;/button&gt;
+            &lt;p class="toggle-link"&gt;
+                Já tem uma conta? &lt;a href="#" id="show-login"&gt;Faça login&lt;/a&gt;
+            &lt;/p&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script src="js/LoginPage.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <p>Após criar <code>LoginPage.html</code>, crie o arquivo <code>MainPage.html</code>:</p>
+
+        <div class="code-header">src/main/resources/static/MainPage.html</div>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Pagina Principal&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Você chegou a pagina principal!!!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>2. Criar CSS</h3>
+        <p>A partir de <code>static</code>, crie o diretório <code>css</code>, dentro crie o arquivo <code>style.css</code> e adicione o seguinte código:</p>
+
+        <div class="code-header">src/main/resources/static/css/style.css</div>
+<pre><code>:root {
+    --bg-light: #F7F9FC;
+    --surface-white: #FFFFFF;
+    --primary-cyan: #00BFFF;
+    --primary-cyan-hover: #00A3CC;
+    --primary-glow: rgba(0, 191, 255, 0.2);
+    --text-dark: #2C3E50;
+    --text-muted: #95A5A6;
+    --card-border: 1px solid #ECF0F1;
+    --card-radius: 12px;
+    --shadow-primary: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Space Mono', 'Consolas', 'Courier New', monospace;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body:not(:has(.main-header)) {
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 1.25rem;
+}
+
+.input-group label {
+    font-weight: 700;
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: var(--card-border);
+    border-radius: var(--card-radius);
+    font-size: 1rem;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    background-color: var(--surface-white);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.auth-button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: var(--card-radius);
+    background-color: var(--primary-cyan);
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 191, 255, 0.2);
+}
+
+.auth-button:hover {
+    background-color: var(--primary-cyan-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 191, 255, 0.3);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.auth-container {
+    background-color: var(--surface-white);
+    padding: 3rem;
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-primary);
+    width: 100%;
+    max-width: 450px;
+    border: var(--card-border);
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.auth-container h2 {
+    border-bottom: 2px solid var(--primary-cyan);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.toggle-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.toggle-link a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.toggle-link a:hover {
+    text-decoration: underline;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}</code></pre>
+
+        <h3>3. Criar JS</h3>
+        
+        <div class="context-box">
+            <span class="context-title">💡 Contexto: Fetch API</span>
+            Este código usa a função <code>fetch</code> para mandar os dados de login para o servidor sem recarregar a tela. Ele pega o email e senha digitados, envia para <code>/api/login</code> e, se a resposta for positiva, redireciona o usuário para a página principal.
+        </div>
+
+        <p>A partir de <code>static</code>, crie o diretório <code>js</code>, dentro crie o arquivo <code>LoginPage.js</code> e adicione o seguinte código:</p>
+
+        <div class="code-header">src/main/resources/static/js/LoginPage.js</div>
+<pre><code>document.addEventListener("DOMContentLoaded", () => {
+    console.log("login.js: DOMContentLoaded");
+
+    const loginFormContainer = document.getElementById("login-form");
+    const registerFormContainer = document.getElementById("register-form");
+    const showRegisterLink = document.getElementById("show-register");
+    const showLoginLink = document.getElementById("show-login");
+
+    if (!loginFormContainer || !registerFormContainer) {
+        console.error("login.js: containers not found", { loginFormContainer, registerFormContainer });
+        return;
+    }
+
+    const loginForm = loginFormContainer.querySelector("form");
+    const registerForm = registerFormContainer.querySelector("form");
+
+    console.log("login.js: found forms", { loginFormExists: !!loginForm, registerFormExists: !!registerForm });
+
+    showRegisterLink?.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginFormContainer.classList.add("hidden");
+        registerFormContainer.classList.remove("hidden");
+    });
+
+    showLoginLink?.addEventListener("click", (e) => {
+        e.preventDefault();
+        registerFormContainer.classList.add("hidden");
+        loginFormContainer.classList.remove("hidden");
+    });
+
+    const loginButton = loginForm?.querySelector('button[type="submit"]');
+    loginButton?.addEventListener("click", () => console.log("login.js: login button clicked"));
+
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            console.log("login.js: submit handler fired");
+
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+            console.log("login.js: credentials (email):", email);
+
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }),
+                    credentials: "same-origin"
+                });
+
+                console.log("login.js: POST /api/login status:", response.status, "redirected:", response.redirected);
+
+                let body = null;
+                try {
+                    body = await response.clone().json();
+                    console.log("login.js: response JSON:", body);
+                } catch (err) {
+                    console.log("login.js: response not JSON");
+                }
+
+                if (!response.ok) {
+                    const msg = body?.message || `Erro ${response.status}`;
+                    console.warn("login.js: login failed:", msg);
+                    alert(msg);
+                    return;
+                }
+
+                if (body && body.id) {
+                    localStorage.setItem('loggedInUserId', String(body.id));
+                    localStorage.setItem('userName', body.name);
+
+                    window.location.href = "/MainPage.html";
+                    return;
+                }
+
+                alert("Resposta inesperada do servidor.");
+            } catch (err) {
+                console.error("login.js: fetch error:", err);
+                alert("Erro de rede ao tentar logar. Veja console/Network.");
+            }
+        });
+    } else {
+        console.warn("login.js: loginForm is null — submit listener not attached");
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("reg-name").value;
+            const email = document.getElementById("reg-email").value;
+            const password = document.getElementById("reg-password").value;
+
+            try {
+                const response = await fetch("/api/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password }),
+                    credentials: "same-origin"
+                });
+
+                const data = await response.json();
+                console.log("login.js: register response:", data);
+                if (response.ok) {
+                    alert("Usuário cadastrado com sucesso! Faça login.");
+                    registerFormContainer.classList.add("hidden");
+                    loginFormContainer.classList.remove("hidden");
+                } else {
+                    alert(data.message || `Erro ${response.status}`);
+                }
+            } catch (err) {
+                console.error("login.js: register fetch error:", err);
+                alert("Erro de rede ao tentar cadastrar.");
+            }
+        });
+    }
+});</code></pre>
+
+        <h2>Rodar o Projeto</h2>
+        <p>Para rodar o projeto, de o seguinte comando via terminal: <code>mvn spring-boot:run</code></p>
+    </section>
+</div>
+
+</body>
+</html>

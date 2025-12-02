@@ -475,3 +475,10 @@ main {
     transform: scale(0.95);
     box-shadow: none;
 }
+
+.drop-zone-active {
+    border: 3px dashed var(--primary-cyan) !important;
+    background-color: rgba(0, 191, 255, 0.1); 
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}

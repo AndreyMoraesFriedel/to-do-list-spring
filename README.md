@@ -1,7 +1,8 @@
-# Projeto: Tela de Login Básico com Spring Boot  
+# Projeto: Tela de Login Básico com Spring Boot
+
 **Instituto Federal Catarinense – Campus Blumenau**  
 **Disciplina:** Desenvolvimento Web  
-**Alunos:** Andrey Moraes, Yuri Teixeira, João Gabriel, Reginaldo  
+**Alunos:** Andrey Moraes, Yuri Teixeira, João Gabriel, Reginaldo
 
 <p align="center">
   <img src="https://img.shields.io/badge/Arch%20Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" />
@@ -17,11 +18,13 @@ Projeto de uma tela de login completa (front + back) utilizando **Spring Boot + 
 ## 1️⃣ Configuração do Ambiente no Arch Linux (Back-end)
 
 ### Instalação das Dependências
+
 ```bash
 sudo pacman -Syu jdk-openjdk maven mariadb code
 ```
 
 > Dica: Se preferir o Visual Studio Code proprietário:
+>
 > ```bash
 > yay -S visual-studio-code-bin
 > ```
@@ -41,9 +44,10 @@ sudo mariadb
 ```
 
 Dentro do prompt do MariaDB:
+
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
-CREATE DATABASE teladelogin;
+CREATE DATABASE todolist;
 FLUSH PRIVILEGES;
 EXIT;
 ```
@@ -55,6 +59,7 @@ EXIT;
 Acesse: [https://start.spring.io](https://start.spring.io)
 
 ### Configurações do Projeto:
+
 - **Project:** Maven
 - **Language:** Java
 - **Spring Boot:** Última versão estável
@@ -62,6 +67,7 @@ Acesse: [https://start.spring.io](https://start.spring.io)
 - **Java:** 21+
 
 ### Dependências obrigatórias:
+
 - Spring Web
 - Spring Data JPA
 - Spring Security
@@ -81,6 +87,7 @@ code .
 ## 3️⃣ Configuração no VS Code
 
 Instale as extensões recomendadas:
+
 - **Extension Pack for Java**
 - **Spring Boot Extension Pack**
 
@@ -89,10 +96,10 @@ Instale as extensões recomendadas:
 Edite: `src/main/resources/application.properties`
 
 ```properties
-spring.application.name=teladelogin
+spring.application.name=todolist
 
 # Conexão com MariaDB (root sem senha - ambiente de desenvolvimento)
-spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
+spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
 spring.datasource.username=root
 spring.datasource.password=
 
@@ -107,7 +114,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
 ## 4️⃣ Estrutura do Projeto (Padrão)
 
 ```
-src/main/java/com/seuprojeto/teladelogin/
+src/main/java/com/seuprojeto/todolist/
 ├── config/
 │   └── SecurityConfig.java
 ├── model/
@@ -120,7 +127,7 @@ src/main/java/com/seuprojeto/teladelogin/
 │   └── UserService.java
 ├── controller/
 │   └── AuthController.java
-└── TeladeloginApplication.java
+└── todolistApplication.java
 
 src/main/resources/static/
 ├── LoginPage.html
@@ -145,6 +152,7 @@ mvn clean spring-boot:run
 ```
 
 Se tudo estiver certo, você verá:
+
 ```
 Tomcat started on port(s): 8080 (http)
 ```
@@ -162,9 +170,10 @@ sudo pacman -S dbeaver
 ```
 
 ### Conexão com o banco:
+
 - **Host:** `localhost`
 - **Porta:** `3306`
-- **Database:** `teladelogin`
+- **Database:** `todolist`
 - **Usuário:** `root`
 - **Senha:** (deixe em branco)
 
@@ -172,15 +181,15 @@ sudo pacman -S dbeaver
 
 ## Tecnologias Utilizadas
 
-| Tecnologia        | Versão       |
-|-------------------|--------------|
-| Arch Linux        | Rolling      |
-| Java              | 21+          |
-| Spring Boot       | 3.x          |
-| Spring Security   | Incluído     |
-| MariaDB           | 10.x+        |
-| Maven             | 3.9+         |
-| VS Code           | Última       |
+| Tecnologia      | Versão   |
+| --------------- | -------- |
+| Arch Linux      | Rolling  |
+| Java            | 21+      |
+| Spring Boot     | 3.x      |
+| Spring Security | Incluído |
+| MariaDB         | 10.x+    |
+| Maven           | 3.9+     |
+| VS Code         | Última   |
 
 ---
 
@@ -195,7 +204,7 @@ No Windows, não usamos um gerenciador de pacotes único por padrão (como o `pa
 1.  **Java (JDK 17 ou 21):** Baixe e instale o [JDK (Oracle ou OpenJDK)](https://adoptium.net/).
 2.  **Visual Studio Code:** Baixe e instale via [code.visualstudio.com](https://code.visualstudio.com/).
 3.  **MariaDB:** Baixe o instalador MSI (arquivo .msi) no site oficial [mariadb.org](https://mariadb.org/download/).
-      * *Dica:* Durante a instalação do MariaDB, o instalador pedirá uma senha para o `root`. Para seguir este tutorial exatamente como está, você pode deixar em branco (não recomendado para produção) ou definir uma senha e lembrar de alterá-la no passo 3.
+    - _Dica:_ Durante a instalação do MariaDB, o instalador pedirá uma senha para o `root`. Para seguir este tutorial exatamente como está, você pode deixar em branco (não recomendado para produção) ou definir uma senha e lembrar de alterá-la no passo 3.
 
 ### Configuração do Banco de Dados (MariaDB)
 
@@ -212,44 +221,44 @@ No Windows, o MariaDB geralmente é instalado como um **Serviço** que inicia au
     ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
 
     /* Criando o banco com o nome correto usado na aplicação */
-    CREATE DATABASE teladelogin;
+    CREATE DATABASE todolist;
 
     FLUSH PRIVILEGES;
 
     exit
     ```
 
------
+---
 
 ## 2\. Criar Projeto Spring
 
 1.  Acesse: [https://start.spring.io/](https://start.spring.io/);
 2.  Configure exatamente como na versão Linux:
-      * **Project:** Maven
-      * **Language:** Java
-      * **Spring Boot:** Versão estável (ex: 3.x.x)
-      * **Packaging:** Jar
-      * **Java:** 21
+    - **Project:** Maven
+    - **Language:** Java
+    - **Spring Boot:** Versão estável (ex: 3.x.x)
+    - **Packaging:** Jar
+    - **Java:** 21
 3.  **Dependências:**
-      * Spring Web
-      * Spring Data JPA
-      * Spring Security
-      * MariaDB Driver
-      * Spring Boot DevTools
+    - Spring Web
+    - Spring Data JPA
+    - Spring Security
+    - MariaDB Driver
+    - Spring Boot DevTools
 4.  Clique em **GENERATE**.
 5.  **Descompactar:**
-      * Vá até a pasta Downloads.
-      * Clique com o botão direito no arquivo `.zip` \> **Extrair Tudo** \> Escolha uma pasta (ex: `C:\Projetos\nome-do-projeto`).
-      * Abra o VS Code, vá em `File > Open Folder` e selecione a pasta extraída.
+    - Vá até a pasta Downloads.
+    - Clique com o botão direito no arquivo `.zip` \> **Extrair Tudo** \> Escolha uma pasta (ex: `C:\Projetos\nome-do-projeto`).
+    - Abra o VS Code, vá em `File > Open Folder` e selecione a pasta extraída.
 
------
+---
 
 ## 3\. Configuração VS Code
 
 Instale as extensões (no ícone de caixas no menu lateral esquerdo):
 
-  * **Extension Pack for Java**
-  * **Spring Boot Extension Pack**
+- **Extension Pack for Java**
+- **Spring Boot Extension Pack**
 
 ### `application.properties` (conexão)
 
@@ -258,7 +267,7 @@ Edite o arquivo `src/main/resources/application.properties`.
 ```properties
 spring.application.name=proj-tela-login
 
-spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
+spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
 spring.datasource.username=root
 # Se você definiu uma senha na instalação do MariaDB, coloque-a abaixo após o igual
 spring.datasource.password=
@@ -267,7 +276,7 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
 
------
+---
 
 ## 4\. Implementação do Código
 
@@ -275,14 +284,14 @@ A estrutura lógica permanece a mesma. No Windows, a única diferença visual é
 
 **Estrutura de arquivos:**
 
-  * `src\main\java\raiz\proj_tela_login\config\SecurityConfig.java`
-  * `src\main\java\raiz\proj_tela_login\model\User.java`
-  * `src\main\java\raiz\proj_tela_login\controller\AuthController.java`
-  * `src\main\resources\static\LoginPage.html`
-  * `src\main\resources\static\js\LoginPage.js`
-  * `src\main\resources\static\css\style.css`
+- `src\main\java\raiz\proj_tela_login\config\SecurityConfig.java`
+- `src\main\java\raiz\proj_tela_login\model\User.java`
+- `src\main\java\raiz\proj_tela_login\controller\AuthController.java`
+- `src\main\resources\static\LoginPage.html`
+- `src\main\resources\static\js\LoginPage.js`
+- `src\main\resources\static\css\style.css`
 
------
+---
 
 ## 5\. Rodar o Projeto
 
@@ -296,11 +305,11 @@ No terminal do VS Code (Atalho: `Ctrl + '`):
     .\mvnw.cmd clean spring-boot:run
     ```
 
-    *(Nota: O ponto e barra `.\` são necessários no PowerShell).*
+    _(Nota: O ponto e barra `.\` são necessários no PowerShell)._
 
 Se tudo estiver correto, você verá logs do Spring Boot iniciando e conectando ao banco de dados sem erros.
 
------
+---
 
 ## 6\. EXTRA
 
@@ -311,8 +320,8 @@ Para ambiente gráfico de banco de dados:
 
 **Para conectar (DBeaver ou HeidiSQL):**
 
-  * **Host:** localhost
-  * **Port:** 3306
-  * **Database:** teladelogin
-  * **Username:** root
-  * **Password:** (Vazio ou a senha que definiu na instalação)
+- **Host:** localhost
+- **Port:** 3306
+- **Database:** todolist
+- **Username:** root
+- **Password:** (Vazio ou a senha que definiu na instalação)

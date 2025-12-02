@@ -137,28 +137,24 @@ function renderDashboardList(dashboards) {
                 <p>Você ainda não tem nenhum dashboard.</p>
                 <p>Crie um novo acima para começar!</p>
             </div>`;
-        updateDashboardCount(); // Atualiza contador para (0)
+        updateDashboardCount();
         return;
     }
 
     const grid = document.createElement('div');
     grid.className = 'dashboard-grid';
     
-    // --- LÓGICA DE DRAG-AND-DROP NA GRID (CONTAINER) ---
     grid.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Necessário para permitir o drop
+        e.preventDefault();
         
-        // Calcula qual elemento está logo DEPOIS da posição atual do mouse (eixo X)
         const afterElement = getDragAfterElement(grid, e.clientX);
         
         const draggable = document.querySelector('.dragging');
         if (!draggable) return;
 
         if (afterElement == null) {
-            // Se não há elemento depois, adiciona ao final da lista
             grid.appendChild(draggable);
         } else {
-            // Insere antes do elemento encontrado
             grid.insertBefore(draggable, afterElement);
         }
     });
@@ -168,28 +164,20 @@ function renderDashboardList(dashboards) {
     });
 
     DOM.dashboardList.appendChild(grid);
-    updateDashboardCount(); // Atualiza contador com o total
+    updateDashboardCount(); 
 }
 
-/**
- * Função que calcula onde soltar o card baseado na posição X do mouse.
- * Retorna o elemento que deve ficar DEPOIS do card que estamos arrastando.
- */
+
 function getDragAfterElement(container, x) {
-    // Seleciona todos os cards arrastáveis que NÃO são o que está sendo movido agora
     const draggableElements = [...container.querySelectorAll('.draggable-item:not(.dragging)')];
 
     return draggableElements.reduce((closest, child) => {
         const box = child.getBoundingClientRect();
         
-        // Calcula o centro horizontal do box
         const boxCenter = box.left + box.width / 2;
         
-        // Diferença entre o cursor do mouse e o centro do elemento
         const offset = x - boxCenter;
 
-        // Queremos o offset que seja negativo (mouse à esquerda do centro) 
-        // e o mais próximo de 0 (o elemento imediatamente à direita)
         if (offset < 0 && offset > closest.offset) {
             return { offset: offset, element: child };
         } else {
@@ -198,10 +186,6 @@ function getDragAfterElement(container, x) {
     }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-
-// ==================================================================================
-// 3. HANDLERS & LOGIC
-// ==================================================================================
 
 async function init() {
     const auth = DashboardService.getAuthData();
@@ -218,7 +202,6 @@ async function init() {
         DOM.dashboardList.innerHTML = `<p style="color: red;">Falha ao carregar dashboards.</p>`;
     }
 
-    // Configura Listeners Globais
     if (DOM.btnCreate) {
         DOM.btnCreate.addEventListener('click', handleCreateDashboard);
     }
@@ -233,7 +216,7 @@ async function handleCreateDashboard() {
     try {
         await DashboardService.create(name, auth.userId);
         DOM.newDashboardInput.value = '';
-        init(); // Recarrega a lista para incluir o novo item
+        init(); 
     } catch (error) {
         alert("Erro ao criar dashboard: " + error.message);
     }
@@ -242,7 +225,6 @@ async function handleCreateDashboard() {
 function handleCardClick(e, dashboard) {
     const btn = e.target.closest('button');
     
-    // Se clicou em um botão, impede a navegação do link
     if (btn) {
         e.preventDefault();
         e.stopPropagation();
@@ -251,7 +233,6 @@ function handleCardClick(e, dashboard) {
         if (action === 'edit') editDashboard(dashboard.id, dashboard.dashboardName);
         if (action === 'delete') deleteDashboard(dashboard.id);
     }
-    // Se não clicou em botão, o comportamento padrão (link href) ocorre
 }
 
 async function editDashboard(id, currentName) {
@@ -261,7 +242,6 @@ async function editDashboard(id, currentName) {
         try {
             const updatedDash = await DashboardService.update(id, newName.trim());
             
-            // Atualização Otimista da UI (Manipulação direta do DOM)
             const nameElement = document.getElementById(`name-${id}`);
             if (nameElement) {
                 nameElement.textContent = updatedDash.dashboardName;
@@ -279,22 +259,20 @@ async function deleteDashboard(id) {
         try {
             await DashboardService.delete(id);
             
-            // Remove o elemento do DOM visualmente
             const cardElement = document.getElementById(`card-${id}`);
             if (cardElement) {
                 cardElement.style.opacity = '0';
                 
                 setTimeout(() => {
                     cardElement.remove();
-                    updateDashboardCount(); // Atualiza o contador após remover
+                    updateDashboardCount(); 
                     
-                    // Se ficou vazio, renderiza o estado vazio
                     if (document.querySelectorAll('.dashboard-card').length === 0) {
                         renderDashboardList([]); 
                     }
                 }, 300);
             } else {
-                init(); // Fallback se não achar o elemento
+                init();
             }
         } catch (error) {
             console.error(error);

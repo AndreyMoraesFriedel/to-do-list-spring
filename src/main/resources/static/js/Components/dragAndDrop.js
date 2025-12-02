@@ -77,20 +77,12 @@ export function setupDropZones(zonesNodeList, token) {
     });
 }
 
-/**
- * Dispara efeitos visuais de sucesso.
- * Tenta usar a biblioteca 'canvas-confetti' se disponível.
- */
 function triggerSuccessEffect(cardElement) {
-    // Adiciona uma classe APENAS para a animação de "pulo" (pop)
-    // A cor verde NÃO depende mais dessa classe, ela vem do ID da coluna (#done-list) no CSS.
+
     cardElement.classList.add('task-finished-pop');
     
-    // Remove a classe de animação após 500ms para que ela possa rodar de novo se necessário
-    // Isso NÃO remove a cor verde, pois a cor está no CSS da coluna pai.
     setTimeout(() => cardElement.classList.remove('task-finished-pop'), 500);
 
-    // Efeito de Confete (Requer biblioteca externa)
     if (typeof confetti === 'function') {
         confetti({
             particleCount: 150,
