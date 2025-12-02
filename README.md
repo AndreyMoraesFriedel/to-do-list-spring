@@ -47,7 +47,7 @@ Dentro do prompt do MariaDB:
 
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
-CREATE DATABASE teladelogin;
+CREATE DATABASE todolist;
 FLUSH PRIVILEGES;
 EXIT;
 ```
@@ -96,10 +96,10 @@ Instale as extensões recomendadas:
 Edite: `src/main/resources/application.properties`
 
 ```properties
-spring.application.name=teladelogin
+spring.application.name=todolist
 
 # Conexão com MariaDB (root sem senha - ambiente de desenvolvimento)
-spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
+spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
 spring.datasource.username=root
 spring.datasource.password=
 
@@ -114,7 +114,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
 ## 4️⃣ Estrutura do Projeto (Padrão)
 
 ```
-src/main/java/com/seuprojeto/teladelogin/
+src/main/java/com/seuprojeto/todolist/
 ├── config/
 │   └── SecurityConfig.java
 ├── model/
@@ -127,7 +127,7 @@ src/main/java/com/seuprojeto/teladelogin/
 │   └── UserService.java
 ├── controller/
 │   └── AuthController.java
-└── TeladeloginApplication.java
+└── ToDoListApplication.java
 
 src/main/resources/static/
 ├── LoginPage.html
