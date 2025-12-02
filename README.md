@@ -43,7 +43,7 @@ sudo mariadb
 Dentro do prompt do MariaDB:
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
-CREATE DATABASE teladelogin;
+CREATE DATABASE todolist;
 FLUSH PRIVILEGES;
 EXIT;
 ```
@@ -89,10 +89,10 @@ Instale as extensões recomendadas:
 Edite: `src/main/resources/application.properties`
 
 ```properties
-spring.application.name=teladelogin
+spring.application.name=todolist
 
 # Conexão com MariaDB (root sem senha - ambiente de desenvolvimento)
-spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
+spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
 spring.datasource.username=root
 spring.datasource.password=
 
@@ -107,7 +107,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
 ## 4️⃣ Estrutura do Projeto (Padrão)
 
 ```
-src/main/java/com/seuprojeto/teladelogin/
+src/main/java/com/seuprojeto/todolist/
 ├── config/
 │   └── SecurityConfig.java
 ├── model/
@@ -120,7 +120,7 @@ src/main/java/com/seuprojeto/teladelogin/
 │   └── UserService.java
 ├── controller/
 │   └── AuthController.java
-└── TeladeloginApplication.java
+└── ToDoListApplication.java
 
 src/main/resources/static/
 ├── LoginPage.html
@@ -164,7 +164,7 @@ sudo pacman -S dbeaver
 ### Conexão com o banco:
 - **Host:** `localhost`
 - **Porta:** `3306`
-- **Database:** `teladelogin`
+- **Database:** `todolist`
 - **Usuário:** `root`
 - **Senha:** (deixe em branco)
 
@@ -212,7 +212,7 @@ No Windows, o MariaDB geralmente é instalado como um **Serviço** que inicia au
     ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
 
     /* Criando o banco com o nome correto usado na aplicação */
-    CREATE DATABASE teladelogin;
+    CREATE DATABASE todolist;
 
     FLUSH PRIVILEGES;
 
@@ -258,7 +258,7 @@ Edite o arquivo `src/main/resources/application.properties`.
 ```properties
 spring.application.name=proj-tela-login
 
-spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
+spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
 spring.datasource.username=root
 # Se você definiu uma senha na instalação do MariaDB, coloque-a abaixo após o igual
 spring.datasource.password=
@@ -313,6 +313,6 @@ Para ambiente gráfico de banco de dados:
 
   * **Host:** localhost
   * **Port:** 3306
-  * **Database:** teladelogin
+  * **Database:** todolist
   * **Username:** root
   * **Password:** (Vazio ou a senha que definiu na instalação)
