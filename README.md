@@ -1,4 +1,4 @@
-# Projeto: Tela de Login Básico com Spring Boot
+# Projeto: Gerenciador De Tarefas com Spring Boot
 
 **Instituto Federal Catarinense – Campus Blumenau**  
 **Disciplina:** Desenvolvimento Web  
@@ -64,7 +64,7 @@ Acesse: [https://start.spring.io](https://start.spring.io)
 - **Language:** Java
 - **Spring Boot:** Última versão estável
 - **Packaging:** Jar
-- **Java:** 21+
+- **Java:** 21
 
 ### Dependências obrigatórias:
 
@@ -90,6 +90,10 @@ Instale as extensões recomendadas:
 
 - **Extension Pack for Java**
 - **Spring Boot Extension Pack**
+- **Maven for Java**
+- **Live Server**
+- **Language Support for Java(TM) by Red Hat**
+
 
 ### Configuração da conexão com o banco (`application.properties`)
 
@@ -109,37 +113,7 @@ spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
 ```
 
----
-
-## 4️⃣ Estrutura do Projeto (Padrão)
-
-```
-src/main/java/com/seuprojeto/todolist/
-├── config/
-│   └── SecurityConfig.java
-├── model/
-│   └── User.java
-|   └── dto/
-│   └── LoginRequest.java
-├── repository/
-│   └── UserRepository.java
-├── service/
-│   └── UserService.java
-├── controller/
-│   └── AuthController.java
-└── ToDoListApplication.java
-
-src/main/resources/static/
-├── LoginPage.html
-├── css/style.css
-└── js/LoginPage.js
-```
-
-> O código Java e os arquivos front-end seguem exatamente o padrão do tutorial original (com autenticação funcional via Spring Security + JWT ou sessão).
-
----
-
-## 5️⃣ Rodando o Projeto
+## 4️⃣Rodando o Projeto
 
 No terminal, dentro da pasta do projeto:
 
@@ -192,144 +166,3 @@ sudo pacman -S dbeaver
 | VS Code         | Última   |
 
 ---
-
-# Tela de login básico (Versão Windows)
-
-## 1\. Configuração do Ambiente (Back-end)
-
-### Instalação de Dependências
-
-No Windows, não usamos um gerenciador de pacotes único por padrão (como o `pacman`). Você deve baixar e instalar os executáveis:
-
-1.  **Java (JDK 17 ou 21):** Baixe e instale o [JDK (Oracle ou OpenJDK)](https://adoptium.net/).
-2.  **Visual Studio Code:** Baixe e instale via [code.visualstudio.com](https://code.visualstudio.com/).
-3.  **MariaDB:** Baixe o instalador MSI (arquivo .msi) no site oficial [mariadb.org](https://mariadb.org/download/).
-    - _Dica:_ Durante a instalação do MariaDB, o instalador pedirá uma senha para o `root`. Para seguir este tutorial exatamente como está, você pode deixar em branco (não recomendado para produção) ou definir uma senha e lembrar de alterá-la no passo 3.
-
-### Configuração do Banco de Dados (MariaDB)
-
-No Windows, o MariaDB geralmente é instalado como um **Serviço** que inicia automaticamente.
-
-1.  **Acessar o Banco:**
-    Procure no Menu Iniciar por **"MariaDB Command Line Client"** e abra-o. Se pediu senha na instalação, digite-a. Se não, apenas dê Enter.
-
-2.  **Criar o Banco de Dados:**
-    Digite os comandos abaixo no terminal do MariaDB:
-
-    ```sql
-    /* Se você definiu senha na instalação, pule a linha do ALTER USER */
-    ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
-
-    /* Criando o banco com o nome correto usado na aplicação */
-    CREATE DATABASE todolist;
-
-    FLUSH PRIVILEGES;
-
-    exit
-    ```
-
----
-
-## 2\. Criar Projeto Spring
-
-1.  Acesse: [https://start.spring.io/](https://start.spring.io/);
-2.  Configure exatamente como na versão Linux:
-    - **Project:** Maven
-    - **Language:** Java
-    - **Spring Boot:** Versão estável (ex: 3.x.x)
-    - **Packaging:** Jar
-    - **Java:** 21
-3.  **Dependências:**
-    - Spring Web
-    - Spring Data JPA
-    - Spring Security
-    - MariaDB Driver
-    - Spring Boot DevTools
-4.  Clique em **GENERATE**.
-5.  **Descompactar:**
-    - Vá até a pasta Downloads.
-    - Clique com o botão direito no arquivo `.zip` \> **Extrair Tudo** \> Escolha uma pasta (ex: `C:\Projetos\nome-do-projeto`).
-    - Abra o VS Code, vá em `File > Open Folder` e selecione a pasta extraída.
-
----
-
-## 3\. Configuração VS Code
-
-Instale as extensões (no ícone de caixas no menu lateral esquerdo):
-
-- **Extension Pack for Java**
-- **Spring Boot Extension Pack**
-
-### `application.properties` (conexão)
-
-Edite o arquivo `src/main/resources/application.properties`.
-
-```properties
-spring.application.name=proj-tela-login
-
-spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
-spring.datasource.username=root
-# Se você definiu uma senha na instalação do MariaDB, coloque-a abaixo após o igual
-spring.datasource.password=
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-```
-
----
-
-## 4\. Implementação do Código
-
-A estrutura lógica permanece a mesma. No Windows, a única diferença visual é que o separador de pastas no sistema é a barra invertida `\`, mas dentro do Java e VS Code, você verá a hierarquia de pacotes normalmente.
-
-**Estrutura de arquivos:**
-
-- `src\main\java\raiz\proj_tela_login\config\SecurityConfig.java`
-- `src\main\java\raiz\proj_tela_login\model\User.java`
-- `src\main\java\raiz\proj_tela_login\controller\AuthController.java`
-- `src\main\resources\static\LoginPage.html`
-- `src\main\resources\static\js\LoginPage.js`
-- `src\main\resources\static\css\style.css`
-
----
-
-## 5\. Rodar o Projeto
-
-No Windows, a maneira mais segura (sem precisar configurar Variáveis de Ambiente do Maven manualmente) é usar o **Maven Wrapper** que vem dentro da pasta do projeto.
-
-No terminal do VS Code (Atalho: `Ctrl + '`):
-
-1.  Limpe e execute o projeto usando o script `mvnw`:
-
-    ```powershell
-    .\mvnw.cmd clean spring-boot:run
-    ```
-
-    _(Nota: O ponto e barra `.\` são necessários no PowerShell)._
-
-Se tudo estiver correto, você verá logs do Spring Boot iniciando e conectando ao banco de dados sem erros.
-
----
-
-## 6\. EXTRA
-
-Para ambiente gráfico de banco de dados:
-
-1.  Baixe e instale o **DBeaver Community** para Windows: [dbeaver.io/download](https://dbeaver.io/download/)
-2.  Ou utilize o **HeidiSQL** (que muitas vezes vem junto no instalador do MariaDB para Windows).
-
-**Para conectar (DBeaver ou HeidiSQL):**
-
-<<<<<<< HEAD
-- **Host:** localhost
-- **Port:** 3306
-- **Database:** todolist
-- **Username:** root
-- **Password:** (Vazio ou a senha que definiu na instalação)
-=======
-  * **Host:** localhost
-  * **Port:** 3306
-  * **Database:** todolist
-  * **Username:** root
-  * **Password:** (Vazio ou a senha que definiu na instalação)
->>>>>>> 4bd45ba0376eee74e5f454edea36060d74105c3e
