@@ -39,7 +39,7 @@ sudo pacman -S dbeaver
 ### Conexão com o banco:
 - **Host:** `localhost`
 - **Porta:** `3306`
-- **Database:** `teladelogin`
+- **Database:** `todolist`
 - **Usuário:** `root`
 - **Senha:** (deixe em branco)
 
@@ -87,7 +87,7 @@ No Windows, o MariaDB geralmente é instalado como um **Serviço** que inicia au
     ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
 
     /* Criando o banco com o nome correto usado na aplicação */
-    CREATE DATABASE teladelogin;
+    CREATE DATABASE todolist;
 
     FLUSH PRIVILEGES;
 
@@ -133,7 +133,7 @@ Edite o arquivo `src/main/resources/application.properties`.
 ```properties
 spring.application.name=proj-tela-login
 
-spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
+spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
 spring.datasource.username=root
 # Se você definiu uma senha na instalação do MariaDB, coloque-a abaixo após o igual
 spring.datasource.password=
@@ -188,6 +188,6 @@ Para ambiente gráfico de banco de dados:
 
   * **Host:** localhost
   * **Port:** 3306
-  * **Database:** teladelogin
+  * **Database:** todolist
   * **Username:** root
   * **Password:** (Vazio ou a senha que definiu na instalação)
