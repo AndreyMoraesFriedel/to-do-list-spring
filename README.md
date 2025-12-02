@@ -47,7 +47,7 @@ Dentro do prompt do MariaDB:
 
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
-CREATE DATABASE todolist;
+CREATE DATABASE teladelogin;
 FLUSH PRIVILEGES;
 EXIT;
 ```
@@ -96,10 +96,10 @@ Instale as extensões recomendadas:
 Edite: `src/main/resources/application.properties`
 
 ```properties
-spring.application.name=todolist
+spring.application.name=teladelogin
 
 # Conexão com MariaDB (root sem senha - ambiente de desenvolvimento)
-spring.datasource.url=jdbc:mariadb://localhost:3306/todolist
+spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
 spring.datasource.username=root
 spring.datasource.password=
 
@@ -114,7 +114,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
 ## 4️⃣ Estrutura do Projeto (Padrão)
 
 ```
-src/main/java/com/seuprojeto/todolist/
+src/main/java/com/seuprojeto/teladelogin/
 ├── config/
 │   └── SecurityConfig.java
 ├── model/
@@ -127,7 +127,7 @@ src/main/java/com/seuprojeto/todolist/
 │   └── UserService.java
 ├── controller/
 │   └── AuthController.java
-└── todolistApplication.java
+└── TeladeloginApplication.java
 
 src/main/resources/static/
 ├── LoginPage.html
@@ -161,7 +161,7 @@ Acesse: [http://localhost:8080](http://localhost:8080)
 
 ---
 
-## 6️⃣ Extra: Interface Gráfica para o Banco
+Extra: Interface Gráfica para o Banco
 
 Instale o **DBeaver** (melhor client SQL gratuito):
 
