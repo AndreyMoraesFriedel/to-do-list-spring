@@ -1,5 +1,5 @@
 Instituto Federal Catarinense Campus Blumenau  
-Discentes: Andrey Moraes, Yuri Teixeira, João Gabriel, Reginaldo  
+Discentes: Andrey Moraes, Yuri Teixeira, João Gabriel, Reginaldo Filho
 Disciplina: Desenvolvimento Web
 
 # Índice
