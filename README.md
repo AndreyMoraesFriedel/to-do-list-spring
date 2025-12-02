@@ -1,180 +1,193 @@
-Instituto Federal Catarinense - Campus Blumenau   
-Discentes: Andrey Moraes, Yuri Teixeira, João Gabriel, Reginaldo Filho    
-Disciplina: Desenvolvimento Web
+# Projeto: Tela de Login Básico com Spring Boot  
+**Instituto Federal Catarinense – Campus Blumenau**  
+**Disciplina:** Desenvolvimento Web  
+**Alunos:** Andrey Moraes, Yuri Teixeira, João Gabriel, Reginaldo  
 
-# Índice
+<p align="center">
+  <img src="https://img.shields.io/badge/Arch%20Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
+  <img src="https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white" />
+</p>
 
-**Linux (Arch)**
-1. [Configuração do Back-end](#1-configuração-do-ambiente-back-end)
-2. [Criar Projeto Spring](#2-criar-projeto-spring)
-3. [Configuração VS Code](#3-configuração-vscode)
-4. [Implementação do Código](#4-implementação-do-código)
-5. [Rodar o Projeto](#5-rodar-o-projeto)
-6. [Extra (Banco de Dados)](#6-extra)
-
-**Windows**
-1. [Configuração do Back-end](#1-configuração-do-ambiente-back-end-1)
-2. [Criar Projeto Spring](#2-criar-projeto-spring-1)
-3. [Configuração VS Code](#3-configuração-vs-code-1)
-4. [Implementação do Código](#4-implementação-do-código-1)
-5. [Rodar o Projeto](#5-rodar-o-projeto-1)
-6. [Extra (Banco de Dados)](#6-extra-1)
+Projeto de uma tela de login completa (front + back) utilizando **Spring Boot + Spring Security + MariaDB**, totalmente configurado e testado no **Arch Linux**.
 
 ---
 
-# Tela de login básico (Versão Arch Linux)
+## 1️⃣ Configuração do Ambiente no Arch Linux (Back-end)
 
-# 1 Configuração do Ambiente (Back-end)
-
-**Instalação de Dependências**
-
--> Abra o terminal e execute o comando abaixo para instalar o Java (JDK), Maven e o MariaDB:
-
+### Instalação das Dependências
 ```bash
 sudo pacman -Syu jdk-openjdk maven mariadb code
-````
+```
 
-(versão proprietária: `visual-studio-code-bin` via AUR);
+> Dica: Se preferir o Visual Studio Code proprietário:
+> ```bash
+> yay -S visual-studio-code-bin
+> ```
 
-**Configuração do Banco de Dados (MariaDB)**
+### Configuração do MariaDB
 
-1.  Iniciar diretório de dados do MariaDB
+```bash
+# 1. Criar diretório de dados
+sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
 
-    ```bash
-    sudo mariadb-install-db --user=mysql --basedir=/usr
-    ```
+# 2. Iniciar e habilitar o serviço
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
 
-    ;
+# 3. Acessar o MariaDB como root e configurar
+sudo mariadb
+```
 
-2.  Iniciar e Habilitar Serviço:
+Dentro do prompt do MariaDB:
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
+CREATE DATABASE teladelogin;
+FLUSH PRIVILEGES;
+EXIT;
+```
 
-    ```bash
-    sudo systemctl start mariadb
-    sudo systemctl enable mariadb
-    ```
+---
 
-    ;
+## 2️⃣ Criando o Projeto Spring Boot
 
-3.  Usuário Root e Criar o Banco:
+Acesse: [https://start.spring.io](https://start.spring.io)
 
-    ```sql
-    sudo mariadb
+### Configurações do Projeto:
+- **Project:** Maven
+- **Language:** Java
+- **Spring Boot:** Última versão estável
+- **Packaging:** Jar
+- **Java:** 17 ou 21
 
-    ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('');
+### Dependências obrigatórias:
+- Spring Web
+- Spring Data JPA
+- Spring Security
+- MariaDB Driver
+- Spring Boot DevTools
 
-    CREATE DATABASE todolist;
+Clique em **GENERATE**, baixe, descompacte e abra:
 
-    FLUSH PRIVILEGES;
+```bash
+unzip seu-projeto.zip
+cd seu-projeto
+code .
+```
 
-    exit
-    ```
+---
 
-    ;
+## 3️⃣ Configuração no VS Code
 
-# 2 Criar Projeto Spring
+Instale as extensões recomendadas:
+- **Extension Pack for Java**
+- **Spring Boot Extension Pack**
 
-1.  Acesse: [https://start.spring.io/];
+### Configuração da conexão com o banco (`application.properties`)
 
-2.  Configure: (
-    Project: Maven,
-    Language: Java,
-    Spring Boot: Versão estável,
-    Packaging: Jar,
-    Java: 17 ou 21
-    );
-
-3.  Dependências: (
-    Spring Web,
-    Spring Data JPA,
-    Spring Security,
-    MariaDB Driver,
-    Spring Boot DevTools.
-    );
-
-4.  Clique em GENERATE;
-
-5.  Descompacte no diretório de sua preferência:
-
-    ```bash
-    unzip nome-do-projeto.zip
-    cd nome-do-projeto
-    code .
-    ```
-
-    ;
-
-# 3 Configuração vscode
-
-Instale as extensões: (
-Extension Pack for Java,
-Spring Boot Extension Pack
-);
-
-// `application.properties` (conexão)
-
-Edite o arquivo `src/main/resources/application.properties`. A configuração para Arch Linux será:
+Edite: `src/main/resources/application.properties`
 
 ```properties
-spring.application.name=proj-tela-login
+spring.application.name=teladelogin
 
+# Conexão com MariaDB (root sem senha - ambiente de desenvolvimento)
 spring.datasource.url=jdbc:mariadb://localhost:3306/teladelogin
 spring.datasource.username=root
 spring.datasource.password=
 
+# Hibernate
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
 ```
 
-;
+---
 
-# 4 Implementação do Código
+## 4️⃣ Estrutura do Projeto (Padrão)
 
-A estrutura de código Java (SecurityConfig, Model, DTO, Repository, Service, Controller) e os arquivos Front-end (HTML, CSS, JS) permanecem iguais ao tutorial original;
+```
+src/main/java/com/seuprojeto/teladelogin/
+├── config/
+│   └── SecurityConfig.java
+├── model/
+│   └── User.java
+├── dto/
+│   └── LoginRequest.java
+├── repository/
+│   └── UserRepository.java
+├── service/
+│   └── UserService.java
+├── controller/
+│   └── AuthController.java
+└── TeladeloginApplication.java
 
-**Estrutura de diretórios no Linux (VS Code):**
+src/main/resources/static/
+├── LoginPage.html
+├── css/style.css
+└── js/LoginPage.js
+```
 
-  * `src/main/java/raiz/proj_tela_login/config/SecurityConfig.java`
-  * `src/main/java/raiz/proj_tela_login/model/User.java`
-  * `src/main/java/raiz/proj_tela_login/controller/AuthController.java`
-  * `src/main/resources/static/LoginPage.html`
-  * `src/main/resources/static/js/LoginPage.js`
-  * `src/main/resources/static/css/style.css`
+> O código Java e os arquivos front-end seguem exatamente o padrão do tutorial original (com autenticação funcional via Spring Security + JWT ou sessão).
 
-# 5 Rodar o Projeto
+---
 
-No terminal do Linux (dentro da pasta raiz do projeto):
+## 5️⃣ Rodando o Projeto
 
-1.  Certifique-se que o Maven está instalado corretamente:
+No terminal, dentro da pasta do projeto:
 
-    ```bash
-    mvn -version
-    ```
+```bash
+# Verificar Maven
+mvn -version
 
-2.  Limpe e execute o projeto:
+# Limpar e executar
+mvn clean spring-boot:run
+```
 
-    ```bash
-    mvn clean spring-boot:run
-    ```
+Se tudo estiver certo, você verá:
+```
+Tomcat started on port(s): 8080 (http)
+```
 
-Se tudo estiver correto, você verá logs do Spring Boot iniciando e conectando ao banco de dados sem erros.
+Acesse: [http://localhost:8080](http://localhost:8080)
 
-# 6 EXTRA
+---
 
-Para ambiente grafico para banco de dados:
+## 6️⃣ Extra: Interface Gráfica para o Banco
+
+Instale o **DBeaver** (melhor client SQL gratuito):
 
 ```bash
 sudo pacman -S dbeaver
 ```
 
-Para conectar:
+### Conexão com o banco:
+- **Host:** `localhost`
+- **Porta:** `3306`
+- **Database:** `teladelogin`
+- **Usuário:** `root`
+- **Senha:** (deixe em branco)
 
-  * **Host:** localhost
-  * **Port:** 3306
-  * **Database:** teladelogin
-  * **Username:** root
-  * **Password:** (deixe vazio)
+---
 
------
+## Tecnologias Utilizadas
+
+| Tecnologia         | Versão       |
+|-------------------|--------------|
+| Arch Linux        | Rolling      |
+| Java              | 17 ou 21     |
+| Spring Boot       | 3.x          |
+| Spring Security   | Incluído     |
+| MariaDB           | 10.x+        |
+| Maven             | 3.9+         |
+| VS Code           | Última       |
+
+---
+
+**Projeto desenvolvido com carinho pelo grupo do IFC Blumenau**  
+Qualquer dúvida: abre uma issue que a gente te ajuda! 
+
+Feito com ☕ + Arch Linux + muito btcfg
 
 # Tela de login básico (Versão Windows)
 
