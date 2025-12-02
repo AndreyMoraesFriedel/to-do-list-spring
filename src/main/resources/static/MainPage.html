@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Cadastro</title>
-    <link rel="stylesheet" href="css/style.css">
-
-</head>
-    <meta charset="UTF-8">
     <title>Lista de Dashboards</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Meus Dashboards</h1>
+    <header class="main-header">
+        <h1>Meus Dashboards</h1>
+    </header>
 
-    <div class="create-dashboard-section" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ccc;">
-        <h3>Novo Dashboard</h3>
-        <input type="text" id="new-dashboard-name" placeholder="Nome do Dashboard (ex: Trabalho)" required>
-        <button id="btn-create-dashboard">Criar</button>
-    </div>
+    <main>
 
-    <div id="dashboard-list"> </div>
-    <p>Dashboards em aberto...<h1></h1><span id="dashboard-count" style="font-size: 1rem; color: #00BFFF;">(0)</span><h1></h1></p>
+        <section class="create-dashboard-section">
+            <h2>Novo Dashboard</h2>
+            <input type="text" id="new-dashboard-name" placeholder="Nome do Dashboard (ex: Trabalho)" required>
+            <button id="btn-create-dashboard">Criar</button>
+        </section>
+
+        <div id="dashboard-list"></div>
+        
+        <p class="dashboard-counter">Dashboards em aberto: <span id="dashboard-count">(0)</span></p>
+    </main>
 
     <script src="js/MainPage.js"></script> 
 </body>

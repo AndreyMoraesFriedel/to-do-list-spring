@@ -1,0 +1,222 @@
+main {
+    width: 100%; 
+    max-width: 1400px; 
+    margin: 2rem auto; 
+    padding: 0 1.5rem; 
+    flex: 1;
+}
+
+.actions-bar {
+    margin-bottom: 2rem; 
+    display: flex; 
+    justify-content: flex-end;
+}
+
+.actions-bar button {
+    width: auto; 
+    padding: 0.8rem 1.5rem; 
+    background-color: var(--success-color);
+    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.2);
+}
+
+.actions-bar button:hover {
+    background-color: #219150; 
+    transform: translateY(-2px);
+}
+
+.create-dashboard-section {
+    background: var(--surface-white); 
+    padding: 2rem; 
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-primary); 
+    margin-bottom: 2rem; 
+    display: flex; 
+    align-items: center;
+    gap: 1rem; 
+    border-left: 5px solid var(--primary-cyan);
+}
+
+.create-dashboard-section h2 {
+    margin: 0; 
+    font-size: 1.1rem; 
+    white-space: nowrap;
+}
+
+#new-dashboard-name {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid #E0E0E0;
+    border-radius: var(--card-radius);
+    font-size: 1rem;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+#new-dashboard-name:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+    background-color: var(--surface-white);
+}
+
+#new-dashboard-name::placeholder {
+    color: var(--text-muted);
+}
+
+#btn-create-dashboard {
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary-cyan);
+    color: #FFF;
+    border: none;
+    border-radius: var(--card-radius);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 191, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+#btn-create-dashboard:hover {
+    background-color: var(--primary-cyan-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 191, 255, 0.3);
+}
+
+#btn-create-dashboard:active {
+    transform: translateY(0);
+}
+
+.dashboard-counter {
+    text-align: center; 
+    color: var(--text-muted); 
+    font-size: 0.95rem; 
+    margin-top: 1rem;
+}
+
+.dashboard-counter span {
+    color: var(--primary-cyan); 
+    font-weight: 700;
+}
+
+.dashboard-grid {
+    display: flex;          
+    flex-wrap: nowrap;         
+    gap: 2rem;                
+    
+    overflow-x: auto;        
+    overflow-y: hidden;       
+    
+    padding: 1rem 0.5rem 2rem 0.5rem;
+    scroll-behavior: smooth;  
+    
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.dashboard-grid::-webkit-scrollbar {
+    height: 10px;            
+}
+
+.dashboard-grid::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+.dashboard-grid::-webkit-scrollbar-thumb {
+    background: var(--primary-cyan);
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+}
+
+.dashboard-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-cyan-hover); 
+}
+
+.dashboard-card {
+    background-color: var(--surface-white); 
+    border-radius: var(--card-radius); 
+    border: var(--card-border);
+    height: 220px;         
+    min-width: 300px;        
+    width: 300px;
+    flex: 0 0 auto;           
+    
+    display: flex; 
+    flex-direction: column; 
+    text-decoration: none; 
+    color: inherit;
+    transition: all 0.3s ease; 
+    box-shadow: var(--shadow-primary); 
+    overflow: hidden;
+    
+    scroll-snap-align: start; 
+    cursor: grab;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-hover); 
+    border-color: var(--primary-cyan);
+}
+
+.dashboard-card:active {
+    cursor: grabbing;
+}
+
+.card-visual {
+    flex: 1; 
+    background-color: var(--bg-light); 
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    padding: 1rem; 
+    border-bottom: 1px solid #EEE;
+}
+
+.card-footer {
+    height: 50px; 
+    padding: 0 1.25rem; 
+    display: flex; 
+    align-items: center;
+    justify-content: space-between; 
+    background: var(--surface-white);
+}
+
+.dashboard-name {
+    font-weight: 700; 
+    font-size: 0.95rem;
+}
+
+.edit-btn-card {
+    background: none; 
+    border: none; 
+    color: var(--text-muted); 
+    font-size: 1.2rem;
+    cursor: pointer; 
+    transition: color 0.2s;
+}
+
+.edit-btn-card:hover { 
+    color: var(--primary-cyan); 
+}
+
+.mini-column {
+    width: 25%; 
+    height: 70%; 
+    background: #E0E0E0; 
+    border-radius: 4px; 
+    margin: 0 2px;
+}
+
+.mini-task {
+    height: 4px; 
+    width: 80%; 
+    background: var(--primary-cyan); 
+    margin: 4px auto; 
+    border-radius: 2px;
+}

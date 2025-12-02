@@ -18,8 +18,8 @@
     </header>
 
     <main>
-        <div class="actions-bar" style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
-            <button id="btn-open-create" class="auth-button" style="background-color: #00BFFF;">
+        <div class="actions-bar">
+            <button id="btn-open-create" class="auth-button btn-create-task">
                 + Nova Tarefa
             </button>
         </div>
@@ -48,8 +48,6 @@
         </section>
     </main>
 
-    <!-- 2. MODAL DE CRIAÇÃO (Novo) -->
-    <!-- IDs batem com ui.createModal no JS -->
     <div id="create-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <span class="close-create-btn close-modal-btn">&times;</span>
@@ -70,7 +68,8 @@
                     <label for="create-urgency">Prioridade</label>
                     <select id="create-urgency">
                         <option value="baixa">Baixa</option>
-                        <option value="media">Média</option> <option value="alta">Alta</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
                     </select>
                 </div>
 
@@ -79,30 +78,30 @@
                     <input type="file" id="create-image" accept="image/*">
                 </div>
 
-                <button type="submit" class="auth-button" style="width: 100%; margin-top: 10px;">Criar</button>
+                <button type="submit" class="auth-button btn-form-submit">Criar</button>
             </form>
         </div>
     </div>
 
-        <div id="view-modal" class="modal-overlay hidden">
-                <div class="modal-content">
-                    <span class="close-view-btn close-modal-btn">&times;</span>
-                    
-                    <h2 id="view-title">...</h2>
-                    <p id="view-priority" style="font-weight: bold; margin-bottom: 10px;">...</p>
-                    
-                    <div id="view-image-container"></div>
+    <div id="view-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-view-btn close-modal-btn">&times;</span>
+            
+            <h2 id="view-title">...</h2>
+            <p id="view-priority" class="view-priority">...</p>
+            
+            <div id="view-image-container"></div>
 
-                    <p id="view-description" style="margin-top: 15px; color: #666; margin-bottom: 20px;">
-                        ...
-                    </p>
+            <p id="view-description" class="view-description">
+                ...
+            </p>
 
-                    <div class="modal-actions" style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid #eee; padding-top: 15px;">
-                        <button id="btn-edit-task" class="auth-button" style="background-color: #f39c12; width: auto;">Editar</button>
-                        <button id="btn-delete-task" class="auth-button" style="background-color: #e74c3c; width: auto;">Excluir</button>
-                    </div>
-                </div>
+            <div class="modal-actions">
+                <button id="btn-edit-task" class="auth-button btn-edit">Editar</button>
+                <button id="btn-delete-task" class="auth-button btn-delete">Excluir</button>
             </div>
+        </div>
+    </div>
 
 
 
